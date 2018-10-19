@@ -1,0 +1,11 @@
+[[constraint]]
+  branch = "master"
+  name = "github.com/einride/recoverer"
+
+[[constraint]]
+  name = "github.com/stretchr/testify"
+  version = "1.2.2"
+
+[prune]
+  go-tests = true
+  unused-packages = true
