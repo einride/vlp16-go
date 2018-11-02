@@ -1,0 +1,9 @@
+version: 2
+jobs:
+  build:
+    docker:
+    - image: circleci/golang:1.11-stretch-node
+    working_directory: /go/src/github.com/einride/vlp-16-go
+    steps:
+    - checkout
+    - run: make
