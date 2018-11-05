@@ -15,25 +15,6 @@ const (
 	testDataFile = "../../test/testdata"
 )
 
-func TestSimulateRead(t *testing.T) {
-	test := assert.New(t)
-	testData, err := os.Open(testDataFile)
-
-	require.NoError(t, err)
-	var packet Packet
-
-	for {
-		err = packet.Read(testData)
-		if err == io.EOF {
-			break
-		}
-		err := parsePacket(&packet)
-		if err != nil {
-			test.Error(err)
-		}
-	}
-}
-
 func TestInterpolateAzimuth(t *testing.T) {
 	test := assert.New(t)
 	testData, err := os.Open(testDataFile)
@@ -89,3 +70,4 @@ func TestDeg2Rad(t *testing.T) {
 	test.Equal(deg2Rad(90), math.Pi/2)
 	test.Equal(deg2Rad(180), math.Pi)
 }
+
