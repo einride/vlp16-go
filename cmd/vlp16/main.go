@@ -24,8 +24,15 @@ func main() {
 		log.Panic("Couldn't connect")
 	}
 
-	if err := vlp16.InitVLP16(conn); err != nil {
-		log.Fatalf("Error from VLP16: %v", err)
-	}
+	packet := vlp16.Packet{}
+	for {
+		cloud := vlp16.SphericalPointCloud{}
+		if err := packet.Read(conn); err != nil {
+			log.Printf("Error reading from connection. %v", err)
+		}
 
+		if err := cloud.UnmarshalPacket(&packet); err != nil {
+			log.Panic("Error parsing packet")
+		}
+	}
 }
