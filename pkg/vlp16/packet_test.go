@@ -55,6 +55,7 @@ var examplePacket = vlp16.Packet{
 	Blocks: [12]vlp16.Block{
 		{
 			Azimuth: 0x2866,
+			Flag:    0xeeff,
 			Channels: [32]vlp16.Channel{
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x2ff, Reflectivity: 0x3},
@@ -92,6 +93,7 @@ var examplePacket = vlp16.Packet{
 		},
 		{
 			Azimuth: 0x288e,
+			Flag:    0xeeff,
 			Channels: [32]vlp16.Channel{
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x0, Reflectivity: 0x64},
@@ -129,6 +131,7 @@ var examplePacket = vlp16.Packet{
 		},
 		{
 			Azimuth: 0x28b6,
+			Flag:    0xeeff,
 			Channels: [32]vlp16.Channel{
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x31c, Reflectivity: 0x45},
@@ -166,6 +169,7 @@ var examplePacket = vlp16.Packet{
 		},
 		{
 			Azimuth: 0x28de,
+			Flag:    0xeeff,
 			Channels: [32]vlp16.Channel{
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x321, Reflectivity: 0x41},
@@ -203,6 +207,7 @@ var examplePacket = vlp16.Packet{
 		},
 		{
 			Azimuth: 0x2906,
+			Flag:    0xeeff,
 			Channels: [32]vlp16.Channel{
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x322, Reflectivity: 0x43},
@@ -238,43 +243,47 @@ var examplePacket = vlp16.Packet{
 				{Distance: 0x2d7, Reflectivity: 0x3b},
 			},
 		},
-		{Azimuth: 0x292e, Channels: [32]vlp16.Channel{
-			{Distance: 0x0, Reflectivity: 0x2},
-			{Distance: 0x32b, Reflectivity: 0x41},
-			{Distance: 0x0, Reflectivity: 0x2},
-			{Distance: 0x324, Reflectivity: 0x4b},
-			{Distance: 0x0, Reflectivity: 0x2},
-			{Distance: 0x2bf, Reflectivity: 0x40},
-			{Distance: 0x0, Reflectivity: 0x3},
-			{Distance: 0x2c0, Reflectivity: 0x3f},
-			{Distance: 0x0, Reflectivity: 0x1},
-			{Distance: 0x2c3, Reflectivity: 0x41},
-			{Distance: 0x2d1, Reflectivity: 0x2a},
-			{Distance: 0x2ca, Reflectivity: 0x3c},
-			{Distance: 0x2c4, Reflectivity: 0x43},
-			{Distance: 0x2cd, Reflectivity: 0x35},
-			{Distance: 0x318, Reflectivity: 0x3b},
-			{Distance: 0x2dd, Reflectivity: 0x35},
-			{Distance: 0x0, Reflectivity: 0x2},
-			{Distance: 0x32f, Reflectivity: 0x3d},
-			{Distance: 0x0, Reflectivity: 0x2},
-			{Distance: 0x326, Reflectivity: 0x4c},
-			{Distance: 0x0, Reflectivity: 0x4},
-			{Distance: 0x2be, Reflectivity: 0x3b},
-			{Distance: 0x0, Reflectivity: 0x3},
-			{Distance: 0x2c6, Reflectivity: 0x35},
-			{Distance: 0x0, Reflectivity: 0x1},
-			{Distance: 0x2c5, Reflectivity: 0x3c},
-			{Distance: 0x2d1, Reflectivity: 0x2d},
-			{Distance: 0x2cc, Reflectivity: 0x3c},
-			{Distance: 0x2ca, Reflectivity: 0x43},
-			{Distance: 0x2cf, Reflectivity: 0x31},
-			{Distance: 0x310, Reflectivity: 0x12},
-			{Distance: 0x2da, Reflectivity: 0x30},
-		},
+		{
+			Azimuth: 0x292e,
+			Flag:    0xeeff,
+			Channels: [32]vlp16.Channel{
+				{Distance: 0x0, Reflectivity: 0x2},
+				{Distance: 0x32b, Reflectivity: 0x41},
+				{Distance: 0x0, Reflectivity: 0x2},
+				{Distance: 0x324, Reflectivity: 0x4b},
+				{Distance: 0x0, Reflectivity: 0x2},
+				{Distance: 0x2bf, Reflectivity: 0x40},
+				{Distance: 0x0, Reflectivity: 0x3},
+				{Distance: 0x2c0, Reflectivity: 0x3f},
+				{Distance: 0x0, Reflectivity: 0x1},
+				{Distance: 0x2c3, Reflectivity: 0x41},
+				{Distance: 0x2d1, Reflectivity: 0x2a},
+				{Distance: 0x2ca, Reflectivity: 0x3c},
+				{Distance: 0x2c4, Reflectivity: 0x43},
+				{Distance: 0x2cd, Reflectivity: 0x35},
+				{Distance: 0x318, Reflectivity: 0x3b},
+				{Distance: 0x2dd, Reflectivity: 0x35},
+				{Distance: 0x0, Reflectivity: 0x2},
+				{Distance: 0x32f, Reflectivity: 0x3d},
+				{Distance: 0x0, Reflectivity: 0x2},
+				{Distance: 0x326, Reflectivity: 0x4c},
+				{Distance: 0x0, Reflectivity: 0x4},
+				{Distance: 0x2be, Reflectivity: 0x3b},
+				{Distance: 0x0, Reflectivity: 0x3},
+				{Distance: 0x2c6, Reflectivity: 0x35},
+				{Distance: 0x0, Reflectivity: 0x1},
+				{Distance: 0x2c5, Reflectivity: 0x3c},
+				{Distance: 0x2d1, Reflectivity: 0x2d},
+				{Distance: 0x2cc, Reflectivity: 0x3c},
+				{Distance: 0x2ca, Reflectivity: 0x43},
+				{Distance: 0x2cf, Reflectivity: 0x31},
+				{Distance: 0x310, Reflectivity: 0x12},
+				{Distance: 0x2da, Reflectivity: 0x30},
+			},
 		},
 		{
 			Azimuth: 0x2956,
+			Flag:    0xeeff,
 			Channels: [32]vlp16.Channel{
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x331, Reflectivity: 0x3d},
@@ -312,6 +321,7 @@ var examplePacket = vlp16.Packet{
 		},
 		{
 			Azimuth: 0x297d,
+			Flag:    0xeeff,
 			Channels: [32]vlp16.Channel{
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x333, Reflectivity: 0x3d},
@@ -349,6 +359,7 @@ var examplePacket = vlp16.Packet{
 		},
 		{
 			Azimuth: 0x29a5,
+			Flag:    0xeeff,
 			Channels: [32]vlp16.Channel{
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x33a, Reflectivity: 0x38},
@@ -386,6 +397,7 @@ var examplePacket = vlp16.Packet{
 		},
 		{
 			Azimuth: 0x29cc,
+			Flag:    0xeeff,
 			Channels: [32]vlp16.Channel{
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x339, Reflectivity: 0x3c},
@@ -423,6 +435,7 @@ var examplePacket = vlp16.Packet{
 		},
 		{
 			Azimuth: 0x29f5,
+			Flag:    0xeeff,
 			Channels: [32]vlp16.Channel{
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x344, Reflectivity: 0x3a},
@@ -460,6 +473,7 @@ var examplePacket = vlp16.Packet{
 		},
 		{
 			Azimuth: 0x2a1d,
+			Flag:    0xeeff,
 			Channels: [32]vlp16.Channel{
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x346, Reflectivity: 0x38},
