@@ -7,11 +7,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/einride/vlp-16-go/pkg/vlp16"
+	"github.com/einride/vlp-16-go"
 	"github.com/stretchr/testify/require"
 )
 
-const testDataFile = "../../test/testdata"
+const (
+	testDataFile = "test/testdata"
+)
 
 func TestPacket_ReadFrom_TestData(t *testing.T) {
 	testData, err := os.Open(testDataFile)
