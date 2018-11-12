@@ -6,13 +6,12 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stretchr/testify/require"
-
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 const (
-	testDataFile = "../../test/testdata"
+	testDataFile = "test/testdata"
 )
 
 func TestInterpolateAzimuth(t *testing.T) {
@@ -70,4 +69,3 @@ func TestDeg2Rad(t *testing.T) {
 	test.Equal(deg2Rad(90), math.Pi/2)
 	test.Equal(deg2Rad(180), math.Pi)
 }
-

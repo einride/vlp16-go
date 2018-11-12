@@ -37,7 +37,7 @@ func TestLastReflection(t *testing.T) {
 	test := assert.New(t)
 
 	cloud := SphericalPointCloud{}
-	err := cloud.UnmarshalPacket(&examplePacket)
+	err := cloud.UnmarshalPacket(&examplePacketLastReflection)
 	if err != nil {
 		test.Error(err)
 	}
@@ -45,7 +45,7 @@ func TestLastReflection(t *testing.T) {
 	test.Equal(cloud.SphericalPoints[24].LastReflection, false)
 }
 
-var examplePacket = Packet{
+var examplePacketLastReflection = Packet{
 	Blocks: [12]Block{
 		{
 			Azimuth: 0x2866,

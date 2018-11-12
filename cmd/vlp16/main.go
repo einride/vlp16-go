@@ -5,7 +5,7 @@ import (
 	"log"
 	"net"
 
-	"github.com/einride/vlp-16-go/pkg/vlp16"
+	"github.com/einride/vlp-16-go"
 )
 
 const (
