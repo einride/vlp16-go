@@ -1,10 +1,11 @@
-package vlp16
+package vlp16_test
 
 import (
 	"io"
 	"os"
 	"testing"
 
+	"github.com/einride/vlp-16-go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -14,10 +15,10 @@ func TestSimulateRead(t *testing.T) {
 	testData, err := os.Open(testDataFile)
 
 	require.NoError(t, err)
-	var packet Packet
+	var packet vlp16.Packet
 
 	for {
-		cloud := SphericalPointCloud{}
+		cloud := vlp16.SphericalPointCloud{}
 		err = packet.Read(testData)
 		if err == io.EOF {
 			break
@@ -36,20 +37,48 @@ func TestSimulateRead(t *testing.T) {
 func TestLastReflection(t *testing.T) {
 	test := assert.New(t)
 
-	cloud := SphericalPointCloud{}
+	cloud := vlp16.SphericalPointCloud{}
 	err := cloud.UnmarshalPacket(&examplePacketLastReflection)
 	if err != nil {
 		test.Error(err)
 	}
 	test.Equal(cloud.SphericalPoints[0].LastReflection, true)
-	test.Equal(cloud.SphericalPoints[24].LastReflection, false)
+	test.Equal(cloud.SphericalPoints[21].LastReflection, false)
 }
 
-var examplePacketLastReflection = Packet{
-	Blocks: [12]Block{
+func TestTimingOffset(t *testing.T) {
+	test := assert.New(t)
+
+	eps := 0.005
+
+	cloud := vlp16.SphericalPointCloud{}
+	err := cloud.UnmarshalPacket(&examplePacketLastReflection)
+	if err != nil {
+		test.Error(err)
+	}
+	test.InDelta(2.304, cloud.SphericalPoints[0].TimingOffset, eps)
+	test.InDelta(34.560, cloud.SphericalPoints[10].TimingOffset, eps)
+	test.InDelta(89.856, cloud.SphericalPoints[20].TimingOffset, eps)
+	test.InDelta(642.816,
+		cloud.SphericalPoints[len(cloud.SphericalPoints)-1].TimingOffset, eps)
+
+	cloud.SphericalPoints = cloud.SphericalPoints[:0]
+	err = cloud.UnmarshalPacket(&examplePacket)
+	if err != nil {
+		test.Error(err)
+	}
+	test.InDelta(2.304, cloud.SphericalPoints[0].TimingOffset, eps)
+	test.InDelta(34.560, cloud.SphericalPoints[10].TimingOffset, eps)
+	test.InDelta(89.856, cloud.SphericalPoints[20].TimingOffset, eps)
+	test.InDelta(1306.37,
+		cloud.SphericalPoints[len(cloud.SphericalPoints)-1].TimingOffset, eps)
+}
+
+var examplePacketLastReflection = vlp16.Packet{
+	Blocks: [12]vlp16.Block{
 		{
 			Azimuth: 0x2866,
-			Channels: [32]Channel{
+			Channels: [32]vlp16.Channel{
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x2ff, Reflectivity: 0x3}, // First valid point, last return
 				{Distance: 0x0, Reflectivity: 0x3},
@@ -65,7 +94,7 @@ var examplePacketLastReflection = Packet{
 				{Distance: 0x2a9, Reflectivity: 0x23},
 				{Distance: 0x2c5, Reflectivity: 0x32},
 				{Distance: 0x2c3, Reflectivity: 0x1d},
-				{Distance: 0x2d9, Reflectivity: 0x4a},
+				{Distance: 0x2d9, Reflectivity: 0x4a}, // 11th valid point, Laser ID 15
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x30f, Reflectivity: 0x7},
 				{Distance: 0x0, Reflectivity: 0x2},
@@ -81,16 +110,16 @@ var examplePacketLastReflection = Packet{
 				{Distance: 0x2b5, Reflectivity: 0x26},
 				{Distance: 0x2d6, Reflectivity: 0x39},
 				{Distance: 0x2c6, Reflectivity: 0x18},
-				{Distance: 0x2d3, Reflectivity: 0x32},
+				{Distance: 0x2d3, Reflectivity: 0x32}, // 21st valid point, Laser ID 31
 			},
 		},
 		{
 			Azimuth: 0x288e,
-			Channels: [32]Channel{
+			Channels: [32]vlp16.Channel{
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x0, Reflectivity: 0x64},
 				{Distance: 0x0, Reflectivity: 0x3},
-				{Distance: 0x318, Reflectivity: 0x4c}, // 25th valid point, not last return
+				{Distance: 0x318, Reflectivity: 0x4c}, // 22nd valid point, not last return
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x2ad, Reflectivity: 0x3e},
 				{Distance: 0x0, Reflectivity: 0x3},
@@ -123,7 +152,7 @@ var examplePacketLastReflection = Packet{
 		},
 		{
 			Azimuth: 0x28b6,
-			Channels: [32]Channel{
+			Channels: [32]vlp16.Channel{
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x31c, Reflectivity: 0x45},
 				{Distance: 0x0, Reflectivity: 0x2},
@@ -160,7 +189,7 @@ var examplePacketLastReflection = Packet{
 		},
 		{
 			Azimuth: 0x28de,
-			Channels: [32]Channel{
+			Channels: [32]vlp16.Channel{
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x321, Reflectivity: 0x41},
 				{Distance: 0x0, Reflectivity: 0x2},
@@ -197,7 +226,7 @@ var examplePacketLastReflection = Packet{
 		},
 		{
 			Azimuth: 0x2906,
-			Channels: [32]Channel{
+			Channels: [32]vlp16.Channel{
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x322, Reflectivity: 0x43},
 				{Distance: 0x0, Reflectivity: 0x2},
@@ -232,44 +261,45 @@ var examplePacketLastReflection = Packet{
 				{Distance: 0x2d7, Reflectivity: 0x3b},
 			},
 		},
-		{Azimuth: 0x292e, Channels: [32]Channel{
-			{Distance: 0x0, Reflectivity: 0x2},
-			{Distance: 0x32b, Reflectivity: 0x41},
-			{Distance: 0x0, Reflectivity: 0x2},
-			{Distance: 0x324, Reflectivity: 0x4b},
-			{Distance: 0x0, Reflectivity: 0x2},
-			{Distance: 0x2bf, Reflectivity: 0x40},
-			{Distance: 0x0, Reflectivity: 0x3},
-			{Distance: 0x2c0, Reflectivity: 0x3f},
-			{Distance: 0x0, Reflectivity: 0x1},
-			{Distance: 0x2c3, Reflectivity: 0x41},
-			{Distance: 0x2d1, Reflectivity: 0x2a},
-			{Distance: 0x2ca, Reflectivity: 0x3c},
-			{Distance: 0x2c4, Reflectivity: 0x43},
-			{Distance: 0x2cd, Reflectivity: 0x35},
-			{Distance: 0x318, Reflectivity: 0x3b},
-			{Distance: 0x2dd, Reflectivity: 0x35},
-			{Distance: 0x0, Reflectivity: 0x2},
-			{Distance: 0x32f, Reflectivity: 0x3d},
-			{Distance: 0x0, Reflectivity: 0x2},
-			{Distance: 0x326, Reflectivity: 0x4c},
-			{Distance: 0x0, Reflectivity: 0x4},
-			{Distance: 0x2be, Reflectivity: 0x3b},
-			{Distance: 0x0, Reflectivity: 0x3},
-			{Distance: 0x2c6, Reflectivity: 0x35},
-			{Distance: 0x0, Reflectivity: 0x1},
-			{Distance: 0x2c5, Reflectivity: 0x3c},
-			{Distance: 0x2d1, Reflectivity: 0x2d},
-			{Distance: 0x2cc, Reflectivity: 0x3c},
-			{Distance: 0x2ca, Reflectivity: 0x43},
-			{Distance: 0x2cf, Reflectivity: 0x31},
-			{Distance: 0x310, Reflectivity: 0x12},
-			{Distance: 0x2da, Reflectivity: 0x30},
-		},
+		{Azimuth: 0x292e,
+			Channels: [32]vlp16.Channel{
+				{Distance: 0x0, Reflectivity: 0x2},
+				{Distance: 0x32b, Reflectivity: 0x41},
+				{Distance: 0x0, Reflectivity: 0x2},
+				{Distance: 0x324, Reflectivity: 0x4b},
+				{Distance: 0x0, Reflectivity: 0x2},
+				{Distance: 0x2bf, Reflectivity: 0x40},
+				{Distance: 0x0, Reflectivity: 0x3},
+				{Distance: 0x2c0, Reflectivity: 0x3f},
+				{Distance: 0x0, Reflectivity: 0x1},
+				{Distance: 0x2c3, Reflectivity: 0x41},
+				{Distance: 0x2d1, Reflectivity: 0x2a},
+				{Distance: 0x2ca, Reflectivity: 0x3c},
+				{Distance: 0x2c4, Reflectivity: 0x43},
+				{Distance: 0x2cd, Reflectivity: 0x35},
+				{Distance: 0x318, Reflectivity: 0x3b},
+				{Distance: 0x2dd, Reflectivity: 0x35},
+				{Distance: 0x0, Reflectivity: 0x2},
+				{Distance: 0x32f, Reflectivity: 0x3d},
+				{Distance: 0x0, Reflectivity: 0x2},
+				{Distance: 0x326, Reflectivity: 0x4c},
+				{Distance: 0x0, Reflectivity: 0x4},
+				{Distance: 0x2be, Reflectivity: 0x3b},
+				{Distance: 0x0, Reflectivity: 0x3},
+				{Distance: 0x2c6, Reflectivity: 0x35},
+				{Distance: 0x0, Reflectivity: 0x1},
+				{Distance: 0x2c5, Reflectivity: 0x3c},
+				{Distance: 0x2d1, Reflectivity: 0x2d},
+				{Distance: 0x2cc, Reflectivity: 0x3c},
+				{Distance: 0x2ca, Reflectivity: 0x43},
+				{Distance: 0x2cf, Reflectivity: 0x31},
+				{Distance: 0x310, Reflectivity: 0x12},
+				{Distance: 0x2da, Reflectivity: 0x30},
+			},
 		},
 		{
 			Azimuth: 0x2956,
-			Channels: [32]Channel{
+			Channels: [32]vlp16.Channel{
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x331, Reflectivity: 0x3d},
 				{Distance: 0x0, Reflectivity: 0x2},
@@ -306,7 +336,7 @@ var examplePacketLastReflection = Packet{
 		},
 		{
 			Azimuth: 0x297d,
-			Channels: [32]Channel{
+			Channels: [32]vlp16.Channel{
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x333, Reflectivity: 0x3d},
 				{Distance: 0x0, Reflectivity: 0x2},
@@ -343,7 +373,7 @@ var examplePacketLastReflection = Packet{
 		},
 		{
 			Azimuth: 0x29a5,
-			Channels: [32]Channel{
+			Channels: [32]vlp16.Channel{
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x33a, Reflectivity: 0x38},
 				{Distance: 0x0, Reflectivity: 0x2},
@@ -380,7 +410,7 @@ var examplePacketLastReflection = Packet{
 		},
 		{
 			Azimuth: 0x29cc,
-			Channels: [32]Channel{
+			Channels: [32]vlp16.Channel{
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x339, Reflectivity: 0x3c},
 				{Distance: 0x0, Reflectivity: 0x2},
@@ -417,7 +447,7 @@ var examplePacketLastReflection = Packet{
 		},
 		{
 			Azimuth: 0x29f5,
-			Channels: [32]Channel{
+			Channels: [32]vlp16.Channel{
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x344, Reflectivity: 0x3a},
 				{Distance: 0x0, Reflectivity: 0x3},
@@ -454,7 +484,7 @@ var examplePacketLastReflection = Packet{
 		},
 		{
 			Azimuth: 0x2a1d,
-			Channels: [32]Channel{
+			Channels: [32]vlp16.Channel{
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x346, Reflectivity: 0x38},
 				{Distance: 0x0, Reflectivity: 0x2},

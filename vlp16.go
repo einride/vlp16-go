@@ -5,9 +5,11 @@ import (
 )
 
 const (
-	distanceFactor = 0.002 // 2/1000. A reported value of 51154 represents 102.308 meter
-	azimuthFactor  = 0.01  // Azimuth is uint16 representing an angle in one hundredth of a degree
-	maxAzimuth     = 35999 // Azimuth max value as binary
+	distanceFactor   = 0.002  // 2/1000. A reported value of 51154 represents 102.308 meter
+	azimuthFactor    = 0.01   // Azimuth is uint16 representing an angle in one hundredth of a degree
+	maxAzimuth       = 35999  // Azimuth max value as binary
+	fullFiringTime   = 55.296 // Total time for laser firings plus recharge (µs)
+	singleFiringTime = 2.304  // Time for one laser firing (µs)
 )
 
 var verticalAngles = [16]float64{
@@ -27,6 +29,24 @@ var verticalAngles = [16]float64{
 	deg2Rad(13),
 	deg2Rad(-1),
 	deg2Rad(15)}
+
+func calculateTimingOffset(returnMode ReturnMode) [32][12]float64 {
+	var timingOffsets [32][12]float64
+	var dataBlockIndex int
+	for y, inner := range timingOffsets {
+		for x := range inner {
+			if returnMode == ReturnModeDualReturn {
+				dataBlockIndex = (x - (x % 2)) + (y / 16)
+			} else {
+				dataBlockIndex = (x * 2) + (y / 16)
+			}
+			dataPointIndex := y % 16
+			timingOffsets[y][x] = fullFiringTime*float64(dataBlockIndex) +
+				singleFiringTime*float64(dataPointIndex)
+		}
+	}
+	return timingOffsets
+}
 
 func spherical2XYZ(laserID int, azimuth uint16, distance uint16) (float64, float64, float64) {
 	omega := verticalAngle(laserID)

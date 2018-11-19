@@ -14,6 +14,36 @@ const (
 	testDataFile = "test/testdata"
 )
 
+func TestCalculateTimeOffset(t *testing.T) {
+	test := assert.New(t)
+
+	eps := 0.005
+
+	// Expected values taken from Figure 9-9 Single Return Mode Timing Offsets (µs), VLP-16 Manual
+	timingOffsetsLastReturn := calculateTimingOffset(ReturnModeLastReturn)
+	test.InDelta(0.0, timingOffsetsLastReturn[0][0], eps)
+	test.InDelta(34.560, timingOffsetsLastReturn[15][0], eps)
+	test.InDelta(55.296, timingOffsetsLastReturn[16][0], eps)
+	test.InDelta(89.856, timingOffsetsLastReturn[31][0], eps)
+	test.InDelta(110.592, timingOffsetsLastReturn[0][1], eps)
+	test.InDelta(145.152, timingOffsetsLastReturn[15][1], eps)
+	test.InDelta(165.888, timingOffsetsLastReturn[16][1], eps)
+	test.InDelta(200.448, timingOffsetsLastReturn[31][1], eps)
+	test.InDelta(1306.37, timingOffsetsLastReturn[31][11], eps)
+
+	// Expected values taken from Figure 9-10 Dual Return Mode Timing Offsets (µs), VLP-16 Manual
+	timingOffsetsDualReturn := calculateTimingOffset(ReturnModeDualReturn)
+	test.InDelta(0.0, timingOffsetsDualReturn[0][0], eps)
+	test.InDelta(34.560, timingOffsetsDualReturn[15][0], eps)
+	test.InDelta(55.296, timingOffsetsDualReturn[16][0], eps)
+	test.InDelta(89.856, timingOffsetsDualReturn[31][0], eps)
+	test.InDelta(0.0, timingOffsetsDualReturn[0][1], eps)
+	test.InDelta(34.560, timingOffsetsDualReturn[15][1], eps)
+	test.InDelta(55.296, timingOffsetsDualReturn[16][1], eps)
+	test.InDelta(89.856, timingOffsetsDualReturn[31][1], eps)
+	test.InDelta(642.816, timingOffsetsDualReturn[31][11], eps)
+}
+
 func TestInterpolateAzimuth(t *testing.T) {
 	test := assert.New(t)
 	testData, err := os.Open(testDataFile)

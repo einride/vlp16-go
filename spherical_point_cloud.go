@@ -17,6 +17,7 @@ type SphericalPoint struct {
 	Elevation      float64
 	Reflectivity   Reflectivity
 	LastReflection bool
+	TimingOffset   float64
 }
 
 func (cloud *SphericalPointCloud) UnmarshalPacket(packet *Packet) error {
@@ -32,6 +33,7 @@ func (cloud *SphericalPointCloud) UnmarshalPacket(packet *Packet) error {
 
 func (cloud *SphericalPointCloud) parseBlock(blockIndex int, packet *Packet) error {
 	azimuth := packet.Blocks[blockIndex].Azimuth
+	timingOffsets := calculateTimingOffset(packet.ReturnMode)
 	for j := 0; j < len(packet.Blocks[0].Channels); j++ {
 		if j == 16 {
 			azimuth = interpolateAzimuth(blockIndex, packet)
@@ -57,6 +59,7 @@ func (cloud *SphericalPointCloud) parseBlock(blockIndex int, packet *Packet) err
 		point.Elevation = verticalAngle(j)
 		point.Reflectivity = packet.Blocks[blockIndex].Channels[j].Reflectivity
 		point.LastReflection = lastReturn
+		point.TimingOffset = timingOffsets[j][blockIndex]
 
 		cloud.SphericalPoints = append(cloud.SphericalPoints, point)
 	}
