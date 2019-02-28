@@ -39,9 +39,6 @@ func (cloud *SphericalPointCloud) parseBlock(blockIndex int, packet *Packet) err
 			azimuth = interpolateAzimuth(blockIndex, packet)
 		}
 		distance := packet.Blocks[blockIndex].Channels[j].Distance
-		if distance == 0 { // skip when distance = 0, invalid return from LiDAR.
-			continue
-		}
 		lastReturn := false
 		switch packet.ReturnMode {
 		case ReturnModeDualReturn:

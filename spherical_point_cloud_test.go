@@ -42,8 +42,8 @@ func TestLastReflection(t *testing.T) {
 	if err != nil {
 		test.Error(err)
 	}
-	test.Equal(cloud.SphericalPoints[0].LastReflection, true)
-	test.Equal(cloud.SphericalPoints[21].LastReflection, false)
+	test.Equal(cloud.SphericalPoints[1].LastReflection, true)
+	test.Equal(cloud.SphericalPoints[35].LastReflection, false)
 }
 
 func TestTimingOffset(t *testing.T) {
@@ -56,9 +56,9 @@ func TestTimingOffset(t *testing.T) {
 	if err != nil {
 		test.Error(err)
 	}
-	test.InDelta(2.304, cloud.SphericalPoints[0].TimingOffset, eps)
-	test.InDelta(34.560, cloud.SphericalPoints[10].TimingOffset, eps)
-	test.InDelta(89.856, cloud.SphericalPoints[20].TimingOffset, eps)
+	test.InDelta(2.304, cloud.SphericalPoints[1].TimingOffset, eps)
+	test.InDelta(34.560, cloud.SphericalPoints[15].TimingOffset, eps)
+	test.InDelta(89.856, cloud.SphericalPoints[31].TimingOffset, eps)
 	test.InDelta(642.816,
 		cloud.SphericalPoints[len(cloud.SphericalPoints)-1].TimingOffset, eps)
 
@@ -67,9 +67,9 @@ func TestTimingOffset(t *testing.T) {
 	if err != nil {
 		test.Error(err)
 	}
-	test.InDelta(2.304, cloud.SphericalPoints[0].TimingOffset, eps)
-	test.InDelta(34.560, cloud.SphericalPoints[10].TimingOffset, eps)
-	test.InDelta(89.856, cloud.SphericalPoints[20].TimingOffset, eps)
+	test.InDelta(2.304, cloud.SphericalPoints[1].TimingOffset, eps)
+	test.InDelta(34.560, cloud.SphericalPoints[15].TimingOffset, eps)
+	test.InDelta(89.856, cloud.SphericalPoints[31].TimingOffset, eps)
 	test.InDelta(1306.37,
 		cloud.SphericalPoints[len(cloud.SphericalPoints)-1].TimingOffset, eps)
 }
@@ -80,7 +80,7 @@ var examplePacketLastReflection = vlp16.Packet{
 			Azimuth: 0x2866,
 			Channels: [32]vlp16.Channel{
 				{Distance: 0x0, Reflectivity: 0x2},
-				{Distance: 0x2ff, Reflectivity: 0x3}, // First valid point, last return
+				{Distance: 0x2ff, Reflectivity: 0x3}, // Second valid point, last return
 				{Distance: 0x0, Reflectivity: 0x3},
 				{Distance: 0x310, Reflectivity: 0x4b},
 				{Distance: 0x0, Reflectivity: 0x2},
@@ -94,7 +94,7 @@ var examplePacketLastReflection = vlp16.Packet{
 				{Distance: 0x2a9, Reflectivity: 0x23},
 				{Distance: 0x2c5, Reflectivity: 0x32},
 				{Distance: 0x2c3, Reflectivity: 0x1d},
-				{Distance: 0x2d9, Reflectivity: 0x4a}, // 11th valid point, Laser ID 15
+				{Distance: 0x2d9, Reflectivity: 0x4a}, // 16th valid point, Laser ID 15
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x30f, Reflectivity: 0x7},
 				{Distance: 0x0, Reflectivity: 0x2},
@@ -110,7 +110,7 @@ var examplePacketLastReflection = vlp16.Packet{
 				{Distance: 0x2b5, Reflectivity: 0x26},
 				{Distance: 0x2d6, Reflectivity: 0x39},
 				{Distance: 0x2c6, Reflectivity: 0x18},
-				{Distance: 0x2d3, Reflectivity: 0x32}, // 21st valid point, Laser ID 31
+				{Distance: 0x2d3, Reflectivity: 0x32}, // 32nd valid point, Laser ID 31
 			},
 		},
 		{
@@ -119,7 +119,7 @@ var examplePacketLastReflection = vlp16.Packet{
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x0, Reflectivity: 0x64},
 				{Distance: 0x0, Reflectivity: 0x3},
-				{Distance: 0x318, Reflectivity: 0x4c}, // 22nd valid point, not last return
+				{Distance: 0x318, Reflectivity: 0x4c}, // 36th valid point, not last return
 				{Distance: 0x0, Reflectivity: 0x2},
 				{Distance: 0x2ad, Reflectivity: 0x3e},
 				{Distance: 0x0, Reflectivity: 0x3},
