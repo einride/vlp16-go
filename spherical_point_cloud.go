@@ -2,8 +2,6 @@ package vlp16
 
 import (
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 type SphericalPointCloud struct {
@@ -20,18 +18,15 @@ type SphericalPoint struct {
 	TimingOffset   float64
 }
 
-func (cloud *SphericalPointCloud) UnmarshalPacket(packet *Packet) error {
+func (cloud *SphericalPointCloud) UnmarshalPacket(packet *Packet) {
 	for i := 0; i < len(packet.Blocks); i++ {
-		if err := cloud.parseBlock(i, packet); err != nil {
-			return errors.Wrap(err, "error parsing Block")
-		}
+		cloud.parseBlock(i, packet)
 		// Duration is in nanoseconds and Velodyne timestamp in microseconds
 		cloud.Timestamp = time.Duration(packet.Timestamp) * time.Microsecond
 	}
-	return nil
 }
 
-func (cloud *SphericalPointCloud) parseBlock(blockIndex int, packet *Packet) error {
+func (cloud *SphericalPointCloud) parseBlock(blockIndex int, packet *Packet) {
 	azimuth := packet.Blocks[blockIndex].Azimuth
 	timingOffsets := calculateTimingOffset(packet.ReturnMode)
 	for j := 0; j < len(packet.Blocks[0].Channels); j++ {
@@ -60,5 +55,4 @@ func (cloud *SphericalPointCloud) parseBlock(blockIndex int, packet *Packet) err
 
 		cloud.SphericalPoints = append(cloud.SphericalPoints, point)
 	}
-	return nil
 }
