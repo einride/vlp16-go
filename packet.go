@@ -47,12 +47,15 @@ const (
 	ProductIDVLS128    ProductID = 0x63
 )
 
+// The exact number of blocks a packet must contain to be valid.
+const numBlocks = 12
+
 func (p *Packet) Read(r io.Reader) error {
 	if err := binary.Read(r, binary.LittleEndian, p); err != nil {
 		return err
 	}
 	// validate flags
-	for i := 0; i < len(p.Blocks); i++ {
+	for i := 0; i < numBlocks; i++ {
 		if p.Blocks[i].Flag != 0xeeff {
 			return errors.Errorf("invalid flag value %v in block %v", p.Blocks[i].Flag, i)
 		}
