@@ -5,7 +5,7 @@ import (
 	"log"
 	"net"
 
-	"github.com/einride/vlp-16-go"
+	vlp16 "github.com/einride/vlp-16-go"
 )
 
 const (
@@ -31,8 +31,6 @@ func main() {
 			log.Printf("Error reading from connection. %v", err)
 		}
 
-		if err := cloud.UnmarshalPacket(&packet); err != nil {
-			log.Panic("Error parsing packet")
-		}
+		cloud.UnmarshalPacket(&packet)
 	}
 }

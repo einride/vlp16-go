@@ -12,24 +12,6 @@ const (
 	singleFiringTime = 2.304  // Time for one laser firing (µs)
 )
 
-var verticalAngles = [16]float64{
-	deg2Rad(-15),
-	deg2Rad(1),
-	deg2Rad(-13),
-	deg2Rad(3),
-	deg2Rad(-11),
-	deg2Rad(5),
-	deg2Rad(-9),
-	deg2Rad(7),
-	deg2Rad(-7),
-	deg2Rad(9),
-	deg2Rad(-5),
-	deg2Rad(11),
-	deg2Rad(-3),
-	deg2Rad(13),
-	deg2Rad(-1),
-	deg2Rad(15)}
-
 func calculateTimingOffset(returnMode ReturnMode) [32][12]float64 {
 	var timingOffsets [32][12]float64
 	var dataBlockIndex int
@@ -61,11 +43,27 @@ func spherical2XYZ(laserID int, azimuth uint16, distance uint16) (float64, float
 }
 
 func verticalAngle(laserID int) float64 {
+	verticalAngles := [16]float64{
+		deg2Rad(-15),
+		deg2Rad(1),
+		deg2Rad(-13),
+		deg2Rad(3),
+		deg2Rad(-11),
+		deg2Rad(5),
+		deg2Rad(-9),
+		deg2Rad(7),
+		deg2Rad(-7),
+		deg2Rad(9),
+		deg2Rad(-5),
+		deg2Rad(11),
+		deg2Rad(-3),
+		deg2Rad(13),
+		deg2Rad(-1),
+		deg2Rad(15)}
 	if laserID > 15 { // Account for second firing
 		laserID -= 16
 	}
-	omega := verticalAngles[laserID]
-	return omega
+	return verticalAngles[laserID]
 }
 
 func interpolateAzimuth(blockIndex int, packet *Packet) uint16 {
