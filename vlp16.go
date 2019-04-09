@@ -68,10 +68,8 @@ func verticalAngle(laserID int) float64 {
 
 func interpolateAzimuth(blockIndex int, packet *Packet) uint16 {
 	// TODO: Interpolate azimuth with high precision algorithm
-	/*
-		Interpolates azimuth angle by using the either the next blocks azimuth or if it's the last block
-		it uses the next to last.
-	*/
+	// Interpolates azimuth angle by using the either the next blocks azimuth or if it's the last block
+	// it uses the next to last.
 	var azimuthMin uint16
 	var azimuthMax uint16
 
