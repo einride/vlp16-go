@@ -1,28 +1,53 @@
 .PHONY: all
-all: go-test test
+all: \
+	circleci-config-validate \
+	dep-ensure \
+	mod-tidy \
+	go-lint \
+	go-review \
+	go-test \
+	git-verify-submodules \
+	git-verify-nodiff
+
+
+.PHONY: clean
+clean:
+	rm -rf \
+		vendor \
+		build
+
+.PHONY: build
+build:
+	@git submodule update --init --recursive $@
 
 include build/rules.mk
-build/rules.mk:
-	git submodule update --init
+build/rules.mk: build
+	@
 
 .PHONY: dep-ensure
 dep-ensure: $(DEP)
 	$(DEP) ensure -v
 
-.PHONY: dep-check
-dep-check: $(DEP)
-	$(DEP) check
+.PHONY: mod-tidy
+mod-tidy:
+	go mod tidy
 
-.PHONY: go-test
-go-test: $(GOLANGCI_LINT) dep-ensure
+# Dupl is disabled because of the testdata in spherical_point_cloud_test
+.PHONY: go-lint
+go-lint: $(GOLANGCI_LINT)
 	$(GOLANGCI_LINT) run --enable-all --disable=dupl
 
-.PHONY: test
-test:
-	go test -race ./...
+.PHONY: go-test
+go-test:
+	go test -race -cover ./...
+
 .PHONY: go-review
 go-review: $(GOREVIEW)
 	$(GOREVIEW) -c 1 ./...
+
+.PHONY: circleci-config-validate
+circleci-config-validate: $(CIRCLECI)
+	$(CIRCLECI) config validate
 
 .PHONY: doc
 doc:

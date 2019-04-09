@@ -2,8 +2,23 @@ version: 2
 jobs:
   build:
     docker:
-    - image: circleci/golang:1.11-stretch-node
+    - image: circleci/golang:1.12-stretch-node
+      environment:
+        GO111MODULE: "on"
     working_directory: /go/src/github.com/einride/vlp-16-go
     steps:
     - checkout
+    - run: make build
+    - restore_cache:
+        keys:
+          - build-cache-{{ checksum ".git/modules/build/HEAD" }}
+    - restore_cache:
+        keys:
+          - mod-cache-{{ checksum "go.sum" }}
     - run: make
+    - save_cache:
+        key: mod-cache-{{ checksum "go.sum" }}
+        paths: ["/go/pkg/mod"]
+    - save_cache:
+        key: build-cache-{{ checksum ".git/modules/build/HEAD" }}
+        paths: ["build"]
