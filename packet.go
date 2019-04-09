@@ -4,7 +4,7 @@ import (
 	"encoding/binary"
 	"io"
 
-	"github.com/pkg/errors"
+	"golang.org/x/xerrors"
 )
 
 type Packet struct {
@@ -57,7 +57,7 @@ func (p *Packet) Read(r io.Reader) error {
 	// validate flags
 	for i := 0; i < numBlocks; i++ {
 		if p.Blocks[i].Flag != 0xeeff {
-			return errors.Errorf("invalid flag value %v in block %v", p.Blocks[i].Flag, i)
+			return xerrors.Errorf("invalid flag value %v in block %v", p.Blocks[i].Flag, i)
 		}
 	}
 	return nil
