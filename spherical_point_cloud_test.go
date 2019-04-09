@@ -252,7 +252,8 @@ func getExamplePacketLastReflection() vlp16.Packet {
 					{Distance: 0x2d7, Reflectivity: 0x3b},
 				},
 			},
-			{Azimuth: 0x292e,
+			{
+				Azimuth: 0x292e,
 				Channels: [32]vlp16.Channel{
 					{Distance: 0x0, Reflectivity: 0x2},
 					{Distance: 0x32b, Reflectivity: 0x41},

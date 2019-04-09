@@ -20,6 +20,9 @@ go-test: $(GOLANGCI_LINT) dep-ensure
 .PHONY: test
 test:
 	go test -race ./...
+.PHONY: go-review
+go-review: $(GOREVIEW)
+	$(GOREVIEW) -c 1 ./...
 
 .PHONY: doc
 doc:
