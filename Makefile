@@ -1,7 +1,6 @@
 .PHONY: all
 all: \
 	circleci-config-validate \
-	dep-ensure \
 	mod-tidy \
 	go-lint \
 	go-review \
@@ -12,9 +11,7 @@ all: \
 
 .PHONY: clean
 clean:
-	rm -rf \
-		vendor \
-		build
+	rm -rf build
 
 .PHONY: build
 build:
@@ -23,10 +20,6 @@ build:
 include build/rules.mk
 build/rules.mk: build
 	@
-
-.PHONY: dep-ensure
-dep-ensure: $(DEP)
-	$(DEP) ensure -v
 
 .PHONY: mod-tidy
 mod-tidy:
