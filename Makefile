@@ -9,6 +9,7 @@ all: \
 	git-verify-submodules \
 	git-verify-nodiff
 
+export GO111MODULE = on
 
 .PHONY: clean
 clean:
