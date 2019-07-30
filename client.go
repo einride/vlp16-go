@@ -17,10 +17,11 @@ type UDPConn interface {
 
 // Client is a VLP-16 client.
 type Client struct {
-	conn       UDPConn
-	senderAddr *net.UDPAddr
-	buf        [lengthOfPacket]byte
-	packet     Packet
+	conn                UDPConn
+	senderAddr          *net.UDPAddr
+	buf                 [lengthOfPacket]byte
+	packet              Packet
+	sphericalPointCloud SphericalPointCloud
 }
 
 // NewClient returns a new VLP-16 client with the provided UDP connection.
@@ -43,6 +44,7 @@ func (c *Client) Receive(ctx context.Context) error {
 		return xerrors.Errorf("VLP-16 client: receive: unexpected packet length: %d (expected %d)", n, lengthOfPacket)
 	}
 	c.packet.unmarshal(&c.buf)
+	c.sphericalPointCloud.UnmarshalPacket(&c.packet)
 	return nil
 }
 
@@ -59,6 +61,11 @@ func (c *Client) RawPacket() []byte {
 // Packet returns the last received VLP-16 packet.
 func (c *Client) Packet() *Packet {
 	return &c.packet
+}
+
+// Packet returns the last received VLP-16 packet decoded as a spherical point cloud.
+func (c *Client) SphericalPointCloud() *SphericalPointCloud {
+	return &c.sphericalPointCloud
 }
 
 // Close the client's underlying UDP connection.
