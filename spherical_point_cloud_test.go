@@ -23,6 +23,18 @@ func TestSimulateRead(t *testing.T) {
 	}
 }
 
+func TestSphericalPointCloud_UnmarshalExamplePacket(t *testing.T) {
+	actual := &SphericalPointCloud{}
+	actual.UnmarshalPacket(examplePacket())
+	require.Equal(t, exampleSphericalPointCloud(), actual)
+}
+
+func TestSphericalPointCloud_UnmarshalExamplePacketLastReflection(t *testing.T) {
+	actual := &SphericalPointCloud{}
+	actual.UnmarshalPacket(examplePacketLastReflection())
+	require.Equal(t, exampleSphericalPointCloudLastReflection(), actual)
+}
+
 func TestLastReflection(t *testing.T) {
 	var cloud SphericalPointCloud
 	cloud.UnmarshalPacket(examplePacketLastReflection())
