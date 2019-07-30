@@ -59,7 +59,8 @@ func verticalAngle(laserID int) float64 {
 		deg2Rad(-3),
 		deg2Rad(13),
 		deg2Rad(-1),
-		deg2Rad(15)}
+		deg2Rad(15),
+	}
 	if laserID > 15 { // Account for second firing
 		laserID -= 16
 	}
