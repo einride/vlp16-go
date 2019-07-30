@@ -5,8 +5,8 @@ import (
 )
 
 type SphericalPointCloud struct {
-	SphericalPoints []SphericalPoint
 	Timestamp       time.Duration
+	SphericalPoints []SphericalPoint
 }
 
 type SphericalPoint struct {
@@ -19,10 +19,10 @@ type SphericalPoint struct {
 }
 
 func (s *SphericalPointCloud) UnmarshalPacket(packet *Packet) {
+	// duration is in nanoseconds and Velodyne timestamp in microseconds
+	s.Timestamp = time.Duration(packet.Timestamp) * time.Microsecond
 	for i := 0; i < len(packet.Blocks); i++ {
 		s.parseBlock(i, packet)
-		// Duration is in nanoseconds and Velodyne timestamp in microseconds
-		s.Timestamp = time.Duration(packet.Timestamp) * time.Microsecond
 	}
 }
 
