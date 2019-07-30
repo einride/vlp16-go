@@ -2,6 +2,8 @@
 .PHONY: all
 all: \
 	circleci-config-validate \
+	go-generate \
+	go-mocks \
 	go-lint \
 	go-review \
 	go-test \
@@ -49,3 +51,23 @@ go-review: $(GOREVIEW)
 .PHONY: circleci-config-validate
 circleci-config-validate: $(CIRCLECI)
 	$(CIRCLECI) config validate
+
+# go-generate: generate Go code
+.PHONY: go-generate
+go-generate: returnmode_string.go productid_string.go
+
+returnmode_string.go: returnmode.go $(GOBIN)
+	$(GOBIN) -m -run golang.org/x/tools/cmd/stringer \
+		-type ReturnMode -trimprefix ReturnMode -output $@ $<
+
+productid_string.go: productid.go $(GOBIN)
+	$(GOBIN) -m -run golang.org/x/tools/cmd/stringer \
+		-type ProductID -trimprefix ProductID -output $@ $<
+
+# go-mocks: generate Go mocks
+.PHONY: go-mocks
+go-mocks: test/mocks/vlp16/mocks.go
+
+test/mocks/vlp16/mocks.go: client.go $(GOBIN)
+	$(GOBIN) -m -run github.com/golang/mock/mockgen -destination $@ -package mockvlp16 \
+		github.com/einride/vlp-16-go UDPConn

@@ -13,7 +13,7 @@ type SphericalPoint struct {
 	Distance       float64
 	Azimuth        float64
 	Elevation      float64
-	Reflectivity   Reflectivity
+	Reflectivity   uint8
 	LastReflection bool
 	TimingOffset   float64
 }
