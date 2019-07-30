@@ -31,7 +31,7 @@ go-mod-tidy:
 
 # go-lint: lint Go files
 .PHONY: go-lint
-go-lint: $(GOLANGCI_LINT) gofumports-verify-format
+go-lint: $(GOLANGCI_LINT)
 	# dupl: disabled due to the testdata in spherical_point_cloud_test
 	$(GOLANGCI_LINT) run --enable-all --disable=dupl
 
