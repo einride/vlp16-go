@@ -18,15 +18,15 @@ type SphericalPoint struct {
 	TimingOffset   float64
 }
 
-func (cloud *SphericalPointCloud) UnmarshalPacket(packet *Packet) {
+func (s *SphericalPointCloud) UnmarshalPacket(packet *Packet) {
 	for i := 0; i < len(packet.Blocks); i++ {
-		cloud.parseBlock(i, packet)
+		s.parseBlock(i, packet)
 		// Duration is in nanoseconds and Velodyne timestamp in microseconds
-		cloud.Timestamp = time.Duration(packet.Timestamp) * time.Microsecond
+		s.Timestamp = time.Duration(packet.Timestamp) * time.Microsecond
 	}
 }
 
-func (cloud *SphericalPointCloud) parseBlock(blockIndex int, packet *Packet) {
+func (s *SphericalPointCloud) parseBlock(blockIndex int, packet *Packet) {
 	azimuth := packet.Blocks[blockIndex].Azimuth
 	timingOffsets := calculateTimingOffset(packet.ReturnMode)
 	for j := 0; j < len(packet.Blocks[0].Channels); j++ {
@@ -53,6 +53,6 @@ func (cloud *SphericalPointCloud) parseBlock(blockIndex int, packet *Packet) {
 		point.LastReflection = lastReturn
 		point.TimingOffset = timingOffsets[j][blockIndex]
 
-		cloud.SphericalPoints = append(cloud.SphericalPoints, point)
+		s.SphericalPoints = append(s.SphericalPoints, point)
 	}
 }
