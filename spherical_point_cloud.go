@@ -6,7 +6,7 @@ import (
 
 type SphericalPointCloud struct {
 	Timestamp       time.Duration
-	SphericalPoints []SphericalPoint
+	SphericalPoints [BlocksPerPacket * ChannelsPerBlock]SphericalPoint
 }
 
 type SphericalPoint struct {
@@ -44,7 +44,6 @@ func (s *SphericalPointCloud) parseBlock(blockIndex int, packet *Packet) {
 		case ReturnModeLastReturn:
 			lastReturn = true
 		}
-
 		point := SphericalPoint{}
 		point.Distance = float64(distance) * distanceFactor
 		point.Azimuth = deg2Rad(float64(azimuth) * azimuthFactor)
@@ -52,7 +51,6 @@ func (s *SphericalPointCloud) parseBlock(blockIndex int, packet *Packet) {
 		point.Reflectivity = packet.Blocks[blockIndex].Channels[j].Reflectivity
 		point.LastReflection = lastReturn
 		point.TimingOffset = timingOffsets[j][blockIndex]
-
-		s.SphericalPoints = append(s.SphericalPoints, point)
+		s.SphericalPoints[blockIndex*ChannelsPerBlock+j] = point
 	}
 }

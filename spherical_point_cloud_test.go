@@ -38,7 +38,6 @@ func TestTimingOffset(t *testing.T) {
 	require.InDelta(t, 34.560, cloud.SphericalPoints[15].TimingOffset, eps)
 	require.InDelta(t, 89.856, cloud.SphericalPoints[31].TimingOffset, eps)
 	require.InDelta(t, 642.816, cloud.SphericalPoints[len(cloud.SphericalPoints)-1].TimingOffset, eps)
-	cloud.SphericalPoints = cloud.SphericalPoints[:0]
 	cloud.UnmarshalPacket(examplePacket())
 	require.InDelta(t, 2.304, cloud.SphericalPoints[1].TimingOffset, eps)
 	require.InDelta(t, 34.560, cloud.SphericalPoints[15].TimingOffset, eps)
