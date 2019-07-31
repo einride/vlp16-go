@@ -4,9 +4,12 @@ import (
 	"time"
 )
 
+// PointsPerCloud is the number of points in a point cloud.
+const PointsPerCloud = BlocksPerPacket * ChannelsPerBlock
+
 type SphericalPointCloud struct {
 	Timestamp       time.Duration
-	SphericalPoints [BlocksPerPacket * ChannelsPerBlock]SphericalPoint
+	SphericalPoints [PointsPerCloud]SphericalPoint
 }
 
 type SphericalPoint struct {
