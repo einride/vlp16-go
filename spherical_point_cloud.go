@@ -24,10 +24,10 @@ type SphericalPoint struct {
 func (s *SphericalPointCloud) UnmarshalPacket(packet *Packet) {
 	// duration is in nanoseconds and Velodyne timestamp in microseconds
 	s.Timestamp = time.Duration(packet.Timestamp) * time.Microsecond
+	timingOffsets := calculateTimingOffset(packet.ReturnMode)
 	for i := range packet.Blocks {
 		block := &packet.Blocks[i]
 		azimuth := block.Azimuth
-		timingOffsets := calculateTimingOffset(packet.ReturnMode)
 		for j := range block.Channels {
 			channel := &block.Channels[j]
 			if j == 16 {
