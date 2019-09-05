@@ -2,6 +2,7 @@ package vlp16
 
 import (
 	"math"
+	"time"
 )
 
 const (
@@ -10,24 +11,18 @@ const (
 	maxAzimuth       = 35999  // Azimuth max value as binary
 	fullFiringTime   = 55.296 // Total time for laser firings plus recharge (µs)
 	singleFiringTime = 2.304  // Time for one laser firing (µs)
+	numberOfRows     = 16
+	deltaElevation   = 2   // Elevation angle difference between two rows (degrees)
+	lowestElevation  = -15 // Elevation angle of first row of measurements (degrees)
 )
 
-func calculateTimingOffset(returnMode ReturnMode) [32][12]float64 {
-	var timingOffsets [32][12]float64
-	var dataBlockIndex int
-	for y, inner := range timingOffsets {
-		for x := range inner {
-			if returnMode == ReturnModeDualReturn {
-				dataBlockIndex = (x - (x % 2)) + (y / 16)
-			} else {
-				dataBlockIndex = (x * 2) + (y / 16)
-			}
-			dataPointIndex := y % 16
-			timingOffsets[y][x] = fullFiringTime*float64(dataBlockIndex) +
-				singleFiringTime*float64(dataPointIndex)
-		}
+func timestampOffset(blockIndex int, channelIndex int, returnMode ReturnMode) time.Duration {
+	if returnMode == ReturnModeDualReturn {
+		return time.Duration(float64(blockIndex-(blockIndex%2)+(channelIndex/16))*fullFiringTime) *
+			time.Microsecond
+	} else {
+		return time.Duration(float64(blockIndex*2+channelIndex/16)*fullFiringTime) * time.Microsecond
 	}
-	return timingOffsets
 }
 
 func spherical2XYZ(laserID int, azimuth uint16, distance uint16) (float64, float64, float64) {
@@ -43,7 +38,7 @@ func spherical2XYZ(laserID int, azimuth uint16, distance uint16) (float64, float
 }
 
 func verticalAngle(laserID int) float64 {
-	verticalAngles := [16]float64{
+	verticalAngles := [numberOfRows]float64{
 		deg2Rad(-15),
 		deg2Rad(1),
 		deg2Rad(-13),
@@ -61,8 +56,8 @@ func verticalAngle(laserID int) float64 {
 		deg2Rad(-1),
 		deg2Rad(15),
 	}
-	if laserID > 15 { // Account for second firing
-		laserID -= 16
+	if laserID > numberOfRows-1 { // Account for second firing
+		laserID -= numberOfRows
 	}
 	return verticalAngles[laserID]
 }
@@ -95,6 +90,6 @@ func interpolateAzimuth(blockIndex int, packet *Packet) uint16 {
 	return azimuth
 }
 
-func deg2Rad(degree float64) float64 {
+func deg2Rad(degree float32) float32 {
 	return degree * math.Pi / 180
 }
