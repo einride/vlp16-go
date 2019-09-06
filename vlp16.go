@@ -1,7 +1,6 @@
 package vlp16
 
 import (
-	"math"
 	"time"
 
 	"github.com/einride/unit"
@@ -25,59 +24,6 @@ const (
 
 // compile-time assertion on full firing time.
 var _ [FullFiringTime]struct{} = [numberOfRows*SingleFiringTime + RechargeTime]struct{}{}
-
-func calculateTimingOffset(returnMode ReturnMode) [32][12]float64 {
-	var timingOffsets [32][12]float64
-	var dataBlockIndex int
-	for y, inner := range timingOffsets {
-		for x := range inner {
-			if returnMode == ReturnModeDualReturn {
-				dataBlockIndex = (x - (x % 2)) + (y / 16)
-			} else {
-				dataBlockIndex = (x * 2) + (y / 16)
-			}
-			dataPointIndex := y % 16
-			timingOffsets[y][x] = FullFiringTime*float64(dataBlockIndex) +
-				SingleFiringTime*float64(dataPointIndex)
-		}
-	}
-	return timingOffsets
-}
-
-func spherical2XYZ(laserID int, azimuth uint16, distance uint16) (float64, float64, float64) {
-	omega := verticalAngle(laserID)
-	r := float64(distance) * distanceFactor
-	alpha := deg2Rad(float64(azimuth) * azimuthFactor)
-	X := r * math.Cos(omega) * math.Sin(alpha)
-	Y := r * math.Cos(omega) * math.Cos(alpha)
-	Z := r * math.Sin(omega)
-	return X, Y, Z
-}
-
-func verticalAngle(channelIndex int) unit.Angle {
-	laserIndex := channelIndex
-	if channelIndex > 15 { // account for second firing
-		laserIndex = -16
-	}
-	return [16]unit.Angle{
-		-15 * unit.Degree,
-		1 * unit.Degree,
-		-13 * unit.Degree,
-		3 * unit.Degree,
-		-11 * unit.Degree,
-		5 * unit.Degree,
-		-9 * unit.Degree,
-		7 * unit.Degree,
-		-7 * unit.Degree,
-		9 * unit.Degree,
-		-5 * unit.Degree,
-		11 * unit.Degree,
-		-3 * unit.Degree,
-		13 * unit.Degree,
-		-1 * unit.Degree,
-		15 * unit.Degree,
-	}[laserIndex]
-}
 
 func interpolateAzimuth(blockIndex int, packet *Packet) uint16 {
 	// TODO: Interpolate azimuth with high precision algorithm
@@ -105,8 +51,4 @@ func interpolateAzimuth(blockIndex int, packet *Packet) uint16 {
 	}
 
 	return azimuth
-}
-
-func deg2Rad(degree float64) float64 {
-	return degree * math.Pi / 180
 }

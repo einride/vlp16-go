@@ -1,58 +1,35 @@
 package vlp16
 
 import (
+	"math"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
 
-func TestSimulateRead(t *testing.T) {
-	sc, done := newPacketRecordingScanner(t, "testdata/recording.bin")
-	defer done()
-	for sc.Scan() {
-		var data [lengthOfPacket]byte
-		copy(data[:], sc.Bytes())
-		var packet Packet
-		packet.unmarshal(&data)
-		var cloud PointCloud
-		cloud.UnmarshalPacket(&packet)
-		for i := range cloud.Points {
-			// all points in test data are strongest return
-			require.Equal(t, cloud.Points[i].LastReflection, false)
-		}
-	}
-}
-
 func TestSphericalPointCloud_UnmarshalExamplePacket(t *testing.T) {
 	actual := &PointCloud{}
 	actual.UnmarshalPacket(examplePacket())
-	require.Equal(t, exampleSphericalPointCloud(), actual)
+	require.True(t, isEqual(examplePointCloud(), actual))
 }
 
-func TestSphericalPointCloud_UnmarshalExamplePacketLastReflection(t *testing.T) {
-	actual := &PointCloud{}
-	actual.UnmarshalPacket(examplePacketLastReflection())
-	require.Equal(t, exampleSphericalPointCloudLastReflection(), actual)
-}
-
-func TestLastReflection(t *testing.T) {
-	var cloud PointCloud
-	cloud.UnmarshalPacket(examplePacketLastReflection())
-	require.Equal(t, cloud.Points[1].LastReflection, true)
-	require.Equal(t, cloud.Points[35].LastReflection, false)
-}
-
-func TestTimingOffset(t *testing.T) {
-	const eps = 0.005
-	var cloud PointCloud
-	cloud.UnmarshalPacket(examplePacketLastReflection())
-	require.InDelta(t, 2.304, cloud.Points[1].TimeOffset, eps)
-	require.InDelta(t, 34.560, cloud.Points[15].TimeOffset, eps)
-	require.InDelta(t, 89.856, cloud.Points[31].TimeOffset, eps)
-	require.InDelta(t, 642.816, cloud.Points[len(cloud.Points)-1].TimeOffset, eps)
-	cloud.UnmarshalPacket(examplePacket())
-	require.InDelta(t, 2.304, cloud.Points[1].TimeOffset, eps)
-	require.InDelta(t, 34.560, cloud.Points[15].TimeOffset, eps)
-	require.InDelta(t, 89.856, cloud.Points[31].TimeOffset, eps)
-	require.InDelta(t, 1306.37, cloud.Points[len(cloud.Points)-1].TimeOffset, eps)
+func isEqual(p *PointCloud, pc *PointCloud) bool {
+	delta := 1e-5
+	if len(p.Points) != len(pc.Points) || len(p.Azimuths) != len(pc.Azimuths) {
+		return false
+	}
+	isEqual := true
+	isEqual = isEqual && (p.TimeSinceTopOfHour == pc.TimeSinceTopOfHour)
+	for i := range p.Azimuths {
+		isEqual = isEqual && (math.Abs(p.Azimuths[i].Radians()-pc.Azimuths[i].Radians()) < delta)
+	}
+	for i := range p.Points {
+		isEqual = isEqual &&
+			(math.Abs(p.Points[i].Distance.Metres()-pc.Points[i].Distance.Metres()) < delta) &&
+			p.Points[i].Column == pc.Points[i].Column &&
+			p.Points[i].Row == pc.Points[i].Row &&
+			p.Points[i].Reflectivity == pc.Points[i].Reflectivity &&
+			p.Points[i].IsLastReflection == pc.Points[i].IsLastReflection
+	}
+	return isEqual
 }

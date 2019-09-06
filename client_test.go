@@ -41,5 +41,5 @@ func TestClient_Receive(t *testing.T) {
 	require.NoError(t, client.Receive(ctx))
 	require.Equal(t, exampleData, client.RawPacket())
 	require.Equal(t, examplePacket(), client.Packet())
-	require.Equal(t, exampleSphericalPointCloud(), client.SphericalPointCloud())
+	require.True(t, isEqual(examplePointCloud(), client.PointCloud()))
 }
