@@ -21,7 +21,7 @@ type Client struct {
 	senderAddr          *net.UDPAddr
 	buf                 [lengthOfPacket]byte
 	packet              Packet
-	sphericalPointCloud SphericalPointCloud
+	sphericalPointCloud PointCloud
 }
 
 // NewClient returns a new VLP-16 client with the provided UDP connection.
@@ -64,7 +64,7 @@ func (c *Client) Packet() *Packet {
 }
 
 // Packet returns the last received VLP-16 packet decoded as a spherical point cloud.
-func (c *Client) SphericalPointCloud() *SphericalPointCloud {
+func (c *Client) SphericalPointCloud() *PointCloud {
 	return &c.sphericalPointCloud
 }
 

@@ -2,15 +2,29 @@ package vlp16
 
 import (
 	"math"
+	"time"
+
+	"github.com/einride/unit"
 )
 
 const (
-	distanceFactor   = 0.002  // 2/1000. A reported value of 51154 represents 102.308 meter
-	azimuthFactor    = 0.01   // Azimuth is uint16 representing an angle in one hundredth of a degree
-	maxAzimuth       = 35999  // Azimuth max value as binary
-	fullFiringTime   = 55.296 // Total time for laser firings plus recharge (µs)
-	singleFiringTime = 2.304  // Time for one laser firing (µs)
+	// FullFiringTime is the total time for laser firings plus recharge (55.296 µs).
+	FullFiringTime = 55296 * time.Nanosecond
+	// SingleFiringTime is the time for one laser firing (2.304 µs).
+	SingleFiringTime = 2304 * time.Nanosecond
+	// RechargeTime is the recharge time between laser firings (18.432 µs).
+	RechargeTime = 18432 * time.Nanosecond
+	// LowestElevation is the elevation angle of first row of measurements.
+	LowestElevation = -15 * unit.Degree
+	// DeltaElevation is the angle difference between two rows.
+	DeltaElevation = 2 * unit.Degree
+
+	numberOfRows = 16
+	maxAzimuth   = 35999 // Azimuth max value as binary
 )
+
+// compile-time assertion on full firing time.
+var _ [FullFiringTime]struct{} = [numberOfRows*SingleFiringTime + RechargeTime]struct{}{}
 
 func calculateTimingOffset(returnMode ReturnMode) [32][12]float64 {
 	var timingOffsets [32][12]float64
@@ -23,8 +37,8 @@ func calculateTimingOffset(returnMode ReturnMode) [32][12]float64 {
 				dataBlockIndex = (x * 2) + (y / 16)
 			}
 			dataPointIndex := y % 16
-			timingOffsets[y][x] = fullFiringTime*float64(dataBlockIndex) +
-				singleFiringTime*float64(dataPointIndex)
+			timingOffsets[y][x] = FullFiringTime*float64(dataBlockIndex) +
+				SingleFiringTime*float64(dataPointIndex)
 		}
 	}
 	return timingOffsets
@@ -34,37 +48,35 @@ func spherical2XYZ(laserID int, azimuth uint16, distance uint16) (float64, float
 	omega := verticalAngle(laserID)
 	r := float64(distance) * distanceFactor
 	alpha := deg2Rad(float64(azimuth) * azimuthFactor)
-
 	X := r * math.Cos(omega) * math.Sin(alpha)
 	Y := r * math.Cos(omega) * math.Cos(alpha)
 	Z := r * math.Sin(omega)
-
 	return X, Y, Z
 }
 
-func verticalAngle(laserID int) float64 {
-	verticalAngles := [16]float64{
-		deg2Rad(-15),
-		deg2Rad(1),
-		deg2Rad(-13),
-		deg2Rad(3),
-		deg2Rad(-11),
-		deg2Rad(5),
-		deg2Rad(-9),
-		deg2Rad(7),
-		deg2Rad(-7),
-		deg2Rad(9),
-		deg2Rad(-5),
-		deg2Rad(11),
-		deg2Rad(-3),
-		deg2Rad(13),
-		deg2Rad(-1),
-		deg2Rad(15),
+func verticalAngle(channelIndex int) unit.Angle {
+	laserIndex := channelIndex
+	if channelIndex > 15 { // account for second firing
+		laserIndex = -16
 	}
-	if laserID > 15 { // Account for second firing
-		laserID -= 16
-	}
-	return verticalAngles[laserID]
+	return [16]unit.Angle{
+		-15 * unit.Degree,
+		1 * unit.Degree,
+		-13 * unit.Degree,
+		3 * unit.Degree,
+		-11 * unit.Degree,
+		5 * unit.Degree,
+		-9 * unit.Degree,
+		7 * unit.Degree,
+		-7 * unit.Degree,
+		9 * unit.Degree,
+		-5 * unit.Degree,
+		11 * unit.Degree,
+		-3 * unit.Degree,
+		13 * unit.Degree,
+		-1 * unit.Degree,
+		15 * unit.Degree,
+	}[laserIndex]
 }
 
 func interpolateAzimuth(blockIndex int, packet *Packet) uint16 {

@@ -2,28 +2,38 @@ package vlp16
 
 import (
 	"time"
+
+	"github.com/einride/unit"
 )
 
 // PointsPerCloud is the number of points in a point cloud.
 const PointsPerCloud = BlocksPerPacket * ChannelsPerBlock
 
-type SphericalPointCloud struct {
-	Timestamp       time.Duration
-	SphericalPoints [PointsPerCloud]SphericalPoint
+type PointCloud struct {
+	TimeSinceTopOfHour time.Duration
+	Points             [PointsPerCloud]Point
 }
 
-type SphericalPoint struct {
-	Distance       float64
-	Azimuth        float64
-	Elevation      float64
-	Reflectivity   uint8
-	LastReflection bool
-	TimingOffset   float64
+func (pc *PointCloud) Azimuth
+
+type Point struct {
+	Row      uint8
+	Column   uint8
+	Distance unit.Distance
+	// Azimuth          unit.Angle
+	// Elevation        unit.Angle
+	Reflectivity     uint8
+	IsLastReflection bool
+	TimeOffset       time.Duration
 }
 
-func (s *SphericalPointCloud) UnmarshalPacket(packet *Packet) {
-	// duration is in nanoseconds and Velodyne timestamp in microseconds
-	s.Timestamp = time.Duration(packet.Timestamp) * time.Microsecond
+const (
+	distanceFactor = 0.002
+	azimuthFactor  = 0.01
+)
+
+func (s *PointCloud) UnmarshalPacket(packet *Packet) {
+	s.TimeSinceTopOfHour = time.Duration(packet.Timestamp) * time.Microsecond
 	timingOffsets := calculateTimingOffset(packet.ReturnMode)
 	for i := range packet.Blocks {
 		block := &packet.Blocks[i]
@@ -33,15 +43,15 @@ func (s *SphericalPointCloud) UnmarshalPacket(packet *Packet) {
 			if j == 16 {
 				azimuth = interpolateAzimuth(i, packet)
 			}
-			point := &s.SphericalPoints[i*ChannelsPerBlock+j]
-			point.Distance = float64(channel.Distance) * distanceFactor
-			point.Azimuth = deg2Rad(float64(azimuth) * azimuthFactor)
+			point := &s.Points[i*ChannelsPerBlock+j]
+			point.Distance = unit.Distance(channel.Distance) * distanceFactor * unit.Metre
+			point.Azimuth = unit.Angle(azimuth) * azimuthFactor * unit.Radian
 			point.Elevation = verticalAngle(j)
 			point.Reflectivity = packet.Blocks[i].Channels[j].Reflectivity
-			point.LastReflection = packet.ReturnMode == ReturnModeLastReturn ||
+			point.IsLastReflection = packet.ReturnMode == ReturnModeLastReturn ||
 				// dual return mode: even number blocks (0,2,4,...) contain last return
 				packet.ReturnMode == ReturnModeDualReturn && i%2 == 0
-			point.TimingOffset = timingOffsets[j][i]
+			point.TimeOffset = timingOffsets[j][i]
 		}
 	}
 }
