@@ -1,4 +1,4 @@
-module github.com/einride/vlp-16-go
+module github.com/einride/vlp16-go
 
 go 1.12
 
