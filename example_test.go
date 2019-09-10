@@ -539,7 +539,7 @@ func examplePacket() *Packet {
 	}
 }
 
-func exampleSphericalPointCloud() *PointCloud {
+func examplePointCloud() *PointCloud {
 	return &PointCloud{
 		Azimuths: [ColumnsPerPacket]unit.Angle{
 			103.42 * unit.Degree,
