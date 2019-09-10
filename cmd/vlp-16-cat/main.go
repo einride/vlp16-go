@@ -7,7 +7,7 @@ import (
 	"os"
 	"strconv"
 
-	vlp16 "github.com/einride/vlp-16-go"
+	vlp16 "github.com/einride/vlp16-go"
 )
 
 func main() {
