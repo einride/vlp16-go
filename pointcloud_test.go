@@ -9,7 +9,7 @@ import (
 func TestSphericalPointCloud_UnmarshalExamplePacket(t *testing.T) {
 	actual := &PointCloud{}
 	actual.UnmarshalPacket(examplePacket())
-	requirePointCloudEqual(t, exampleSphericalPointCloud(), actual)
+	requirePointCloudEqual(t, examplePointCloud(), actual)
 }
 
 func requirePointCloudEqual(t *testing.T, p *PointCloud, pc *PointCloud) {

@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
-	"net"
 	"os"
 	"strconv"
 
@@ -21,17 +20,20 @@ func main() {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
-	udpConn, err := net.ListenUDP("udp4", &net.UDPAddr{IP: net.IPv4(0, 0, 0, 0), Port: port})
+	client, err := vlp16.ListenUDP(
+		context.Background(),
+		fmt.Sprintf("0.0.0.0:%d", port),
+		vlp16.WithBatchSize(10),
+		vlp16.WithBufferSize(2097152),
+	)
 	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
+		panic(err)
 	}
-	client := vlp16.NewClient(udpConn)
 	for {
 		if err := client.Receive(context.Background()); err != nil {
 			panic(err)
 		}
-		fmt.Println(client.SenderAddr())
+		fmt.Println(client.SourceIP())
 		fmt.Println(hex.EncodeToString(client.RawPacket()))
 		fmt.Println()
 	}

@@ -3,15 +3,12 @@
 all: \
 	circleci-config-validate \
 	go-generate \
-	go-mocks \
-	go-lint \
 	go-review \
 	go-test \
+	go-lint \
 	go-mod-tidy \
 	git-verify-submodules \
 	git-verify-nodiff
-
-export GO111MODULE := on
 
 # clean: remove generated build files
 .PHONY: clean
@@ -63,11 +60,3 @@ returnmode_string.go: returnmode.go $(GOBIN)
 productid_string.go: productid.go $(GOBIN)
 	$(GOBIN) -m -run golang.org/x/tools/cmd/stringer \
 		-type ProductID -trimprefix ProductID -output $@ $<
-
-# go-mocks: generate Go mocks
-.PHONY: go-mocks
-go-mocks: test/mocks/vlp16/mocks.go
-
-test/mocks/vlp16/mocks.go: client.go $(GOBIN)
-	$(GOBIN) -m -run github.com/golang/mock/mockgen -destination $@ -package mockvlp16 \
-		github.com/einride/vlp-16-go UDPConn
