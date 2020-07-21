@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/require"
 	"golang.org/x/net/nettest"
 	"golang.org/x/sync/errgroup"
+	"gotest.tools/v3/assert"
 )
 
 func TestClient_Receive(t *testing.T) {
@@ -17,28 +17,28 @@ func TestClient_Receive(t *testing.T) {
 	defer cancel()
 	addr := getFreeAddress(t)
 	rx, err := ListenUDP(ctx, addr)
-	require.NoError(t, err)
+	assert.NilError(t, err)
 	var g errgroup.Group
 	g.Go(func() error {
 		return rx.Receive(ctx)
 	})
 	conn, err := net.Dial("udp4", addr)
-	require.NoError(t, err)
+	assert.NilError(t, err)
 	_, err = conn.Write(exampleData()[:])
-	require.NoError(t, err)
-	require.NoError(t, conn.Close())
-	require.NoError(t, g.Wait())
-	require.Equal(t, exampleData()[:], rx.RawPacket())
-	require.Equal(t, examplePacket(), rx.Packet())
+	assert.NilError(t, err)
+	assert.NilError(t, conn.Close())
+	assert.NilError(t, g.Wait())
+	assert.DeepEqual(t, exampleData()[:], rx.RawPacket())
+	assert.DeepEqual(t, examplePacket(), rx.Packet())
 	requirePointCloudEqual(t, examplePointCloud(), rx.PointCloud())
 }
 
 func getFreeAddress(t *testing.T) string {
 	t.Helper()
 	l, err := nettest.NewLocalPacketListener("udp4")
-	require.NoError(t, err)
+	assert.NilError(t, err)
 	defer func() {
-		require.NoError(t, l.Close())
+		assert.NilError(t, l.Close())
 	}()
 	return l.LocalAddr().String()
 }

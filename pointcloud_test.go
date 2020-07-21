@@ -1,9 +1,10 @@
 package vlp16
 
 import (
+	"math"
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"gotest.tools/v3/assert"
 )
 
 func TestSphericalPointCloud_UnmarshalExamplePacket(t *testing.T) {
@@ -14,16 +15,16 @@ func TestSphericalPointCloud_UnmarshalExamplePacket(t *testing.T) {
 
 func requirePointCloudEqual(t *testing.T, p *PointCloud, pc *PointCloud) {
 	const delta = 1e-5
-	require.Equal(t, p.TimeSinceTopOfHour, pc.TimeSinceTopOfHour)
+	assert.Equal(t, p.TimeSinceTopOfHour, pc.TimeSinceTopOfHour)
 	for i := range p.Azimuths {
-		require.InDelta(t, p.Azimuths[i].Radians(), pc.Azimuths[i].Radians(), delta)
+		assert.Assert(t, math.Abs(p.Azimuths[i].Radians()-pc.Azimuths[i].Radians()) < delta)
 	}
 	for i := range p.Points {
-		require.InDelta(t, p.Points[i].Distance.Metres(), pc.Points[i].Distance.Metres(), delta)
-		require.Equal(t, p.Points[i].Column, pc.Points[i].Column)
-		require.Equal(t, p.Points[i].Row, pc.Points[i].Row)
-		require.Equal(t, p.Points[i].Reflectivity, pc.Points[i].Reflectivity)
-		require.Equal(t, p.Points[i].IsLastReflection, pc.Points[i].IsLastReflection)
+		assert.Assert(t, math.Abs(p.Points[i].Distance.Metres()-pc.Points[i].Distance.Metres()) < delta)
+		assert.Equal(t, p.Points[i].Column, pc.Points[i].Column)
+		assert.Equal(t, p.Points[i].Row, pc.Points[i].Row)
+		assert.Equal(t, p.Points[i].Reflectivity, pc.Points[i].Reflectivity)
+		assert.Equal(t, p.Points[i].IsLastReflection, pc.Points[i].IsLastReflection)
 	}
 }
 
@@ -47,7 +48,7 @@ func TestInterpolateAzimuth(t *testing.T) {
 					} else {
 						testBool = newAzimuth > azimuth
 					}
-					require.True(t, testBool)
+					assert.Assert(t, testBool)
 				}
 			}
 		}

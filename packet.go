@@ -2,8 +2,7 @@ package vlp16
 
 import (
 	"encoding/binary"
-
-	"golang.org/x/xerrors"
+	"fmt"
 )
 
 const (
@@ -61,7 +60,7 @@ const (
 	indexOfProductIDInPacket  = indexOfReturnModeInPacket + lengthOfReturnMode
 )
 
-// compile-time assertion on structure of packet
+// compile-time assertion on structure of packet.
 var _ [1206]struct{} = [lengthOfPacket]struct{}{}
 
 // flag is the magic value of the flag field.
@@ -71,7 +70,7 @@ const flag = 0xeeff
 func (p *Packet) Validate() error {
 	for i := range p.Blocks {
 		if p.Blocks[i].Flag != flag {
-			return xerrors.Errorf("validate packet: invalid flag %#x in block %v", p.Blocks[i].Flag, i)
+			return fmt.Errorf("validate packet: invalid flag %#x in block %v", p.Blocks[i].Flag, i)
 		}
 	}
 	return nil

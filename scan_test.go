@@ -5,23 +5,24 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"gotest.tools/v3/assert"
+	is "gotest.tools/v3/assert/cmp"
 )
 
 func TestScanPackets(t *testing.T) {
 	f, err := os.Open("testdata/recording.bin")
-	require.NoError(t, err)
+	assert.NilError(t, err)
 	sc := bufio.NewScanner(f)
 	sc.Split(ScanPackets)
 	var numPackets int
 	for sc.Scan() {
 		numPackets++
-		require.Len(t, sc.Bytes(), lengthOfPacket)
+		assert.Assert(t, is.Len(sc.Bytes(), lengthOfPacket))
 		var rawPacket [lengthOfPacket]byte
 		copy(rawPacket[:], sc.Bytes())
 		var packet Packet
 		packet.unmarshal(&rawPacket)
-		require.NoError(t, packet.Validate())
+		assert.NilError(t, packet.Validate())
 	}
-	require.Equal(t, 1000, numPackets)
+	assert.Equal(t, 1000, numPackets)
 }

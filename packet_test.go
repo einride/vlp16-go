@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/require"
+	"gotest.tools/v3/assert"
 )
 
 func TestPacket_Unmarshal_TestData(t *testing.T) {
@@ -17,14 +17,14 @@ func TestPacket_Unmarshal_TestData(t *testing.T) {
 		var packet Packet
 		packet.unmarshal(&data)
 		numPackets++
-		require.Equal(t, ReturnModeStrongest, packet.ReturnMode)
-		require.Equal(t, ProductIDVLP16, packet.ProductID)
-		require.True(t,
+		assert.Equal(t, ReturnModeStrongest, packet.ReturnMode)
+		assert.Equal(t, ProductIDVLP16, packet.ProductID)
+		assert.Assert(t,
 			time.Duration(packet.Timestamp)*time.Microsecond <= time.Hour,
 			"timestamp should be <= number of microseconds in an hour",
 		)
 	}
-	require.Equal(t, 1000, numPackets)
+	assert.Equal(t, 1000, numPackets)
 }
 
 func BenchmarkPacket_Unmarshal_Example(b *testing.B) {
@@ -38,5 +38,5 @@ func BenchmarkPacket_Unmarshal_Example(b *testing.B) {
 func TestPacket_Unmarshal_Example(t *testing.T) {
 	actual := &Packet{}
 	actual.unmarshal(exampleData())
-	require.Equal(t, examplePacket(), actual)
+	assert.DeepEqual(t, examplePacket(), actual)
 }

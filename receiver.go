@@ -2,10 +2,10 @@ package vlp16
 
 import (
 	"context"
+	"fmt"
 	"net"
 
 	"golang.org/x/net/ipv4"
-	"golang.org/x/xerrors"
 )
 
 // ListenUDP listens for VLP-16 UDP packets on the specified address.
@@ -17,11 +17,11 @@ func ListenUDP(ctx context.Context, addr string, receiverOpts ...ReceiverOption)
 	var listenConfig net.ListenConfig
 	packetConn, err := listenConfig.ListenPacket(ctx, "udp4", addr)
 	if err != nil {
-		return nil, xerrors.Errorf("VLP-16: listen UDP: %w", err)
+		return nil, fmt.Errorf("VLP-16: listen UDP: %w", err)
 	}
 	udpConn := packetConn.(*net.UDPConn)
 	if err := udpConn.SetReadBuffer(opts.bufferSizeBytes); err != nil {
-		return nil, xerrors.Errorf("VLP-16: listen UDP: %w", err)
+		return nil, fmt.Errorf("VLP-16: listen UDP: %w", err)
 	}
 	conn := ipv4.NewPacketConn(udpConn)
 	c := &Receiver{conn: conn}
@@ -54,11 +54,11 @@ func (c *Receiver) Receive(ctx context.Context) error {
 		c.currMessageIndex = 0
 		deadline, _ := ctx.Deadline()
 		if err := c.conn.SetReadDeadline(deadline); err != nil {
-			return xerrors.Errorf("VLP-16 receiver: %w", err)
+			return fmt.Errorf("VLP-16 receiver: %w", err)
 		}
 		n, err := c.conn.ReadBatch(c.messages, 0)
 		if err != nil {
-			return xerrors.Errorf("VLP-16 receiver: %w", err)
+			return fmt.Errorf("VLP-16 receiver: %w", err)
 		}
 		c.messageBufSize = n
 	}
@@ -90,7 +90,7 @@ func (c *Receiver) PointCloud() *PointCloud {
 // Close the client's underlying UDP connection.
 func (c *Receiver) Close() error {
 	if err := c.conn.Close(); err != nil {
-		return xerrors.Errorf("VLP-16 receiver: close: %w", err)
+		return fmt.Errorf("VLP-16 receiver: close: %w", err)
 	}
 	return nil
 }
