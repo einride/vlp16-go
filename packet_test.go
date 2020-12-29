@@ -12,14 +12,15 @@ func TestPacket_Unmarshal_TestData(t *testing.T) {
 	defer done()
 	var numPackets int
 	for sc.Scan() {
-		var data [lengthOfPacket]byte
-		copy(data[:], sc.Bytes())
+		var rawPacket RawPacket
+		copy(rawPacket[:], sc.Bytes())
 		var packet Packet
-		packet.unmarshal(&data)
+		packet.UnmarshalRawPacket(&rawPacket)
 		numPackets++
 		assert.Equal(t, ReturnModeStrongest, packet.ReturnMode)
 		assert.Equal(t, ProductIDVLP16, packet.ProductID)
-		assert.Assert(t,
+		assert.Assert(
+			t,
 			time.Duration(packet.Timestamp)*time.Microsecond <= time.Hour,
 			"timestamp should be <= number of microseconds in an hour",
 		)
@@ -29,14 +30,14 @@ func TestPacket_Unmarshal_TestData(t *testing.T) {
 
 func BenchmarkPacket_Unmarshal_Example(b *testing.B) {
 	packet := &Packet{}
-	exampleData := exampleData()
+	exampleData := exampleRawPacket(b)
 	for i := 0; i < b.N; i++ {
-		packet.unmarshal(exampleData)
+		packet.UnmarshalRawPacket(exampleData)
 	}
 }
 
 func TestPacket_Unmarshal_Example(t *testing.T) {
 	actual := &Packet{}
-	actual.unmarshal(exampleData())
+	actual.UnmarshalRawPacket(exampleRawPacket(t))
 	assert.DeepEqual(t, examplePacket(), actual)
 }

@@ -34,7 +34,7 @@ func main() {
 			panic(err)
 		}
 		fmt.Println(client.SourceIP())
-		fmt.Println(hex.EncodeToString(client.RawPacket()))
+		fmt.Println(hex.EncodeToString(client.RawPacket()[:]))
 		fmt.Println()
 	}
 }

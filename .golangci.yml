@@ -1,7 +1,5 @@
 run:
   timeout: 5m
-  skip-dirs:
-    - gen
 
 linters:
   enable-all: true
@@ -17,4 +15,4 @@ linters:
     - nestif # allow deep nesting
     - unparam # allow constant parameters
     - goerr113 # allow "dynamic" errors
-    - gofumpt # TODO: enable when whitespace diff issue is fixed
+    - nlreturn # don't enforce whitespace before return

@@ -28,9 +28,9 @@ func ListenUDP(ctx context.Context, addr string, receiverOpts ...ReceiverOption)
 	// allocate memory for batch reads
 	c.messages = make([]ipv4.Message, 0, opts.batchSize)
 	for i := 0; i < opts.batchSize; i++ {
-		c.packetBuf = append(c.packetBuf, &[lengthOfPacket]byte{})
+		c.rawPacketBuf = append(c.rawPacketBuf, &RawPacket{})
 		c.messages = append(c.messages, ipv4.Message{
-			Buffers: [][]byte{c.packetBuf[i][:]},
+			Buffers: [][]byte{c.rawPacketBuf[i][:]},
 		})
 	}
 	return c, nil
@@ -40,7 +40,7 @@ func ListenUDP(ctx context.Context, addr string, receiverOpts ...ReceiverOption)
 type Receiver struct {
 	conn             *ipv4.PacketConn
 	messages         []ipv4.Message
-	packetBuf        []*[lengthOfPacket]byte
+	rawPacketBuf     []*RawPacket
 	messageBufSize   int
 	currMessageIndex int
 	currPacket       Packet
@@ -61,7 +61,7 @@ func (c *Receiver) Receive(ctx context.Context) error {
 		}
 		c.messageBufSize = n
 	}
-	c.currPacket.unmarshal(c.packetBuf[c.currMessageIndex])
+	c.currPacket.UnmarshalRawPacket(c.rawPacketBuf[c.currMessageIndex])
 	return nil
 }
 
@@ -70,9 +70,9 @@ func (c *Receiver) SourceIP() net.IP {
 	return c.messages[c.currMessageIndex].Addr.(*net.UDPAddr).IP
 }
 
-// RawPacket returns the raw bytes of the last received VLP-16 packet.
-func (c *Receiver) RawPacket() []byte {
-	return c.packetBuf[c.currMessageIndex][:c.messages[c.currMessageIndex].N]
+// RawPacket returns the raw, unprocessed last received VLP-16 packet.
+func (c *Receiver) RawPacket() *RawPacket {
+	return c.rawPacketBuf[c.currMessageIndex]
 }
 
 // Packet returns the last received VLP-16 packet.
