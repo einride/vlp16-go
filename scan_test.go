@@ -17,11 +17,11 @@ func TestScanPackets(t *testing.T) {
 	var numPackets int
 	for sc.Scan() {
 		numPackets++
-		assert.Assert(t, is.Len(sc.Bytes(), lengthOfPacket))
-		var rawPacket [lengthOfPacket]byte
+		assert.Assert(t, is.Len(sc.Bytes(), SizeOfPacket))
+		var rawPacket RawPacket
 		copy(rawPacket[:], sc.Bytes())
 		var packet Packet
-		packet.unmarshal(&rawPacket)
+		packet.UnmarshalRawPacket(&rawPacket)
 		assert.NilError(t, packet.Validate())
 	}
 	assert.Equal(t, 1000, numPackets)

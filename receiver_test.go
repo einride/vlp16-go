@@ -24,11 +24,11 @@ func TestClient_Receive(t *testing.T) {
 	})
 	conn, err := net.Dial("udp4", addr)
 	assert.NilError(t, err)
-	_, err = conn.Write(exampleData()[:])
+	_, err = conn.Write(exampleRawPacket(t)[:])
 	assert.NilError(t, err)
 	assert.NilError(t, conn.Close())
 	assert.NilError(t, g.Wait())
-	assert.DeepEqual(t, exampleData()[:], rx.RawPacket())
+	assert.DeepEqual(t, exampleRawPacket(t), rx.RawPacket())
 	assert.DeepEqual(t, examplePacket(), rx.Packet())
 }
 

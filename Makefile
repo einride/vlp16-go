@@ -1,34 +1,42 @@
-# all: run a complete build
+SHELL := /bin/bash
+
 .PHONY: all
 all: \
+	commitlint \
 	go-generate \
+	go-lint \
 	go-review \
 	go-test \
-	go-lint \
 	go-mod-tidy \
 	git-verify-nodiff
 
+include tools/commitlint/rules.mk
 include tools/git-verify-nodiff/rules.mk
 include tools/golangci-lint/rules.mk
 include tools/goreview/rules.mk
-include tools/xtools/rules.mk
+include tools/semantic-release/rules.mk
+include tools/stringer/rules.mk
 
-# go-mod-tidy: update go modules
+.PHONY: clean
+clean:
+	$(info [$@] cleaning generated files...)
+	@find -name '*_string.go' -exec rm {} \+
+
 .PHONY: go-mod-tidy
 go-mod-tidy:
-	go mod tidy -v
+	$(info [$@] tidying Go module files...)
+	@go mod tidy -v
 
-# go-test: run Go test suite
 .PHONY: go-test
 go-test:
-	go test -race -cover ./...
+	$(info [$@] running Go tests...)
+	@go test -count 1 -cover -race ./...
 
-# go-generate: generate Go code
 .PHONY: go-generate
-go-generate: returnmode_string.go productid_string.go
+go-generate: \
+	productid_string.go \
+	returnmode_string.go
 
-returnmode_string.go: returnmode.go $(stringer)
-	$(stringer) -type ReturnMode -trimprefix ReturnMode -output $@ $<
-
-productid_string.go: productid.go $(GOBIN)
-	$(stringer) -type ProductID -trimprefix ProductID -output $@ $<
+%_string.go: %.go $(stringer)
+	$(info generating $*.go)
+	@go generate ./$<

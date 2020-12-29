@@ -33,9 +33,12 @@ type Channel struct {
 	Reflectivity uint8
 }
 
+// SizeOfPacket is the size of a single VLP-16 packet in bytes.
+const SizeOfPacket = 1206
+
 // structure of packet.
 const (
-	// lengths
+	// lengths.
 	lengthOfDistance     = 2
 	lengthOfReflectivity = 1
 	lengthOfAzimuth      = 2
@@ -45,15 +48,14 @@ const (
 	lengthOfTimestamp    = 4
 	lengthOfChannel      = lengthOfDistance + lengthOfReflectivity
 	lengthOfBlock        = lengthOfFlag + lengthOfAzimuth + lengthOfChannel*ChannelsPerBlock
-	lengthOfPacket       = lengthOfBlock*BlocksPerPacket + lengthOfTimestamp + lengthOfReturnMode + lengthOfProductID
-	// channel indices
+	// channel indices.
 	indexOfDistanceInChannel     = 0
 	indexOfReflectivityInChannel = lengthOfDistance
-	// block indices
+	// block indices.
 	indexOfFlagInBlock     = 0
 	indexOfAzimuthInBlock  = lengthOfFlag
 	indexOfChannelsInBlock = indexOfAzimuthInBlock + lengthOfAzimuth
-	// packet indices
+	// packet indices.
 	indexOfBlocksInPacket     = 0
 	indexOfTimestampInPacket  = lengthOfBlock * BlocksPerPacket
 	indexOfReturnModeInPacket = indexOfTimestampInPacket + lengthOfTimestamp
@@ -61,7 +63,8 @@ const (
 )
 
 // compile-time assertion on structure of packet.
-var _ [1206]struct{} = [lengthOfPacket]struct{}{}
+// nolint: lll
+var _ [SizeOfPacket]struct{} = [lengthOfBlock*BlocksPerPacket + lengthOfTimestamp + lengthOfReturnMode + lengthOfProductID]struct{}{}
 
 // flag is the magic value of the flag field.
 const flag = 0xeeff
@@ -76,20 +79,20 @@ func (p *Packet) Validate() error {
 	return nil
 }
 
-func (p *Packet) unmarshal(b *[lengthOfPacket]byte) {
+func (p *Packet) UnmarshalRawPacket(raw *RawPacket) {
 	for iBlock := range p.Blocks {
 		block := &p.Blocks[iBlock]
 		baseBlock := indexOfBlocksInPacket + iBlock*lengthOfBlock
-		block.Flag = binary.LittleEndian.Uint16(b[baseBlock+indexOfFlagInBlock:])
-		block.Azimuth = binary.LittleEndian.Uint16(b[baseBlock+indexOfAzimuthInBlock:])
+		block.Flag = binary.LittleEndian.Uint16(raw[baseBlock+indexOfFlagInBlock:])
+		block.Azimuth = binary.LittleEndian.Uint16(raw[baseBlock+indexOfAzimuthInBlock:])
 		for iChannel := range p.Blocks[iBlock].Channels {
 			channel := &block.Channels[iChannel]
 			baseChannel := baseBlock + indexOfChannelsInBlock + iChannel*lengthOfChannel
-			channel.Distance = binary.LittleEndian.Uint16(b[baseChannel+indexOfDistanceInChannel:])
-			channel.Reflectivity = b[baseChannel+indexOfReflectivityInChannel]
+			channel.Distance = binary.LittleEndian.Uint16(raw[baseChannel+indexOfDistanceInChannel:])
+			channel.Reflectivity = raw[baseChannel+indexOfReflectivityInChannel]
 		}
 	}
-	p.Timestamp = binary.LittleEndian.Uint32(b[indexOfTimestampInPacket:])
-	p.ReturnMode = ReturnMode(b[indexOfReturnModeInPacket])
-	p.ProductID = ProductID(b[indexOfProductIDInPacket])
+	p.Timestamp = binary.LittleEndian.Uint32(raw[indexOfTimestampInPacket:])
+	p.ReturnMode = ReturnMode(raw[indexOfReturnModeInPacket])
+	p.ProductID = ProductID(raw[indexOfProductIDInPacket])
 }
