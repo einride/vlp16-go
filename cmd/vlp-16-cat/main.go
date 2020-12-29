@@ -7,7 +7,7 @@ import (
 	"os"
 	"strconv"
 
-	vlp16 "github.com/einride/vlp16-go"
+	"github.com/einride/vlp16-go"
 )
 
 func main() {
@@ -23,14 +23,14 @@ func main() {
 	client, err := vlp16.ListenUDP(
 		context.Background(),
 		fmt.Sprintf("0.0.0.0:%d", port),
-		vlp16.WithBatchSize(10),
-		vlp16.WithBufferSize(2097152),
+		vlp16.WithReadBatchSize(10),
+		vlp16.WithReadBufferSize(2097152),
 	)
 	if err != nil {
 		panic(err)
 	}
 	for {
-		if err := client.Receive(context.Background()); err != nil {
+		if err := client.ReadPacket(); err != nil {
 			panic(err)
 		}
 		fmt.Println(client.SourceIP())

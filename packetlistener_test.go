@@ -16,13 +16,13 @@ func TestClient_Receive(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), testTimeout)
 	defer cancel()
 	addr := getFreeAddress(t)
-	rx, err := ListenUDP(ctx, addr)
+	lis, err := ListenUDP(ctx, addr)
 	assert.NilError(t, err)
 	var g sync.WaitGroup
 	g.Add(1)
 	go func() {
 		defer g.Done()
-		if err := rx.Receive(ctx); err != nil {
+		if err := lis.ReadPacket(); err != nil {
 			t.Error(err)
 		}
 	}()
@@ -32,8 +32,8 @@ func TestClient_Receive(t *testing.T) {
 	assert.NilError(t, err)
 	assert.NilError(t, conn.Close())
 	g.Wait()
-	assert.DeepEqual(t, exampleRawPacket(t), rx.RawPacket())
-	assert.DeepEqual(t, examplePacket(), rx.Packet())
+	assert.DeepEqual(t, exampleRawPacket(t), lis.RawPacket())
+	assert.DeepEqual(t, examplePacket(), lis.Packet())
 }
 
 func getFreeAddress(t *testing.T) string {
