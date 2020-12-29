@@ -31,7 +31,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/einride/vlp16-go"
+	"go.einride.tech/vlp16"
 )
 
 func main() {
