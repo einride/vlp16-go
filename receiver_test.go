@@ -3,11 +3,11 @@ package vlp16
 import (
 	"context"
 	"net"
+	"sync"
 	"testing"
 	"time"
 
 	"golang.org/x/net/nettest"
-	"golang.org/x/sync/errgroup"
 	"gotest.tools/v3/assert"
 )
 
@@ -18,16 +18,20 @@ func TestClient_Receive(t *testing.T) {
 	addr := getFreeAddress(t)
 	rx, err := ListenUDP(ctx, addr)
 	assert.NilError(t, err)
-	var g errgroup.Group
-	g.Go(func() error {
-		return rx.Receive(ctx)
-	})
+	var g sync.WaitGroup
+	g.Add(1)
+	go func() {
+		defer g.Done()
+		if err := rx.Receive(ctx); err != nil {
+			t.Error(err)
+		}
+	}()
 	conn, err := net.Dial("udp4", addr)
 	assert.NilError(t, err)
 	_, err = conn.Write(exampleRawPacket(t)[:])
 	assert.NilError(t, err)
 	assert.NilError(t, conn.Close())
-	assert.NilError(t, g.Wait())
+	g.Wait()
 	assert.DeepEqual(t, exampleRawPacket(t), rx.RawPacket())
 	assert.DeepEqual(t, examplePacket(), rx.Packet())
 }
