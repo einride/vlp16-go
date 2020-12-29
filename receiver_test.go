@@ -30,7 +30,6 @@ func TestClient_Receive(t *testing.T) {
 	assert.NilError(t, g.Wait())
 	assert.DeepEqual(t, exampleData()[:], rx.RawPacket())
 	assert.DeepEqual(t, examplePacket(), rx.Packet())
-	requirePointCloudEqual(t, examplePointCloud(), rx.PointCloud())
 }
 
 func getFreeAddress(t *testing.T) string {
