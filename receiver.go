@@ -44,7 +44,6 @@ type Receiver struct {
 	messageBufSize   int
 	currMessageIndex int
 	currPacket       Packet
-	currPointCloud   PointCloud
 }
 
 // Receive a VLP-16 packet.
@@ -63,7 +62,6 @@ func (c *Receiver) Receive(ctx context.Context) error {
 		c.messageBufSize = n
 	}
 	c.currPacket.unmarshal(c.packetBuf[c.currMessageIndex])
-	c.currPointCloud.UnmarshalPacket(&c.currPacket)
 	return nil
 }
 
@@ -80,11 +78,6 @@ func (c *Receiver) RawPacket() []byte {
 // Packet returns the last received VLP-16 packet.
 func (c *Receiver) Packet() *Packet {
 	return &c.currPacket
-}
-
-// PointCloud returns the point cloud representation of the last received packet.
-func (c *Receiver) PointCloud() *PointCloud {
-	return &c.currPointCloud
 }
 
 // Close the client's underlying UDP connection.
