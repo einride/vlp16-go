@@ -38,5 +38,5 @@ go-generate: \
 	returnmode_string.go
 
 %_string.go: %.go $(stringer)
-	$(info generating $*.go)
+	$(info generating $@...)
 	@go generate ./$<
