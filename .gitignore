@@ -1,3 +1,4 @@
 .idea
 test/mocks
 tools/*/*/
+build/
