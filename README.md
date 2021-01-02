@@ -1,5 +1,16 @@
 # VLP-16 Go
 
+[![PkgGoDev][pkg-badge]][pkg]
+[![GoReportCard][report-badge]][report]
+[![Codecov][codecov-badge]][codecov]
+
+[pkg-badge]: https://pkg.go.dev/badge/go.einride.tech/vlp16
+[pkg]: https://pkg.go.dev/go.einride.tech/vlp16
+[report-badge]: https://goreportcard.com/badge/go.einride.tech/vlp16
+[report]: https://goreportcard.com/report/go.einride.tech/vlp16
+[codecov-badge]: https://codecov.io/gh/einride/vlp16-go/branch/master/graph/badge.svg
+[codecov]: https://codecov.io/gh/einride/vlp16-go
+
 Go SDK for reading and parsing data from [Velodyne][velodyne] [VLP-16
 (a.k.a. Puck)][puck] sensors.
 
