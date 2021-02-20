@@ -10,6 +10,7 @@ import (
 )
 
 func TestScanPackets(t *testing.T) {
+	t.Parallel()
 	f, err := os.Open("testdata/recording.bin")
 	assert.NilError(t, err)
 	sc := bufio.NewScanner(f)

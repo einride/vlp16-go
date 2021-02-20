@@ -8,6 +8,7 @@ import (
 )
 
 func TestPacket_Unmarshal_TestData(t *testing.T) {
+	t.Parallel()
 	sc, done := newPacketRecordingScanner(t, "testdata/recording.bin")
 	defer done()
 	var numPackets int
@@ -28,16 +29,17 @@ func TestPacket_Unmarshal_TestData(t *testing.T) {
 	assert.Equal(t, 1000, numPackets)
 }
 
+func TestPacket_Unmarshal_Example(t *testing.T) {
+	t.Parallel()
+	actual := &Packet{}
+	actual.UnmarshalRawPacket(exampleRawPacket(t))
+	assert.DeepEqual(t, examplePacket(), actual)
+}
+
 func BenchmarkPacket_Unmarshal_Example(b *testing.B) {
 	packet := &Packet{}
 	exampleData := exampleRawPacket(b)
 	for i := 0; i < b.N; i++ {
 		packet.UnmarshalRawPacket(exampleData)
 	}
-}
-
-func TestPacket_Unmarshal_Example(t *testing.T) {
-	actual := &Packet{}
-	actual.UnmarshalRawPacket(exampleRawPacket(t))
-	assert.DeepEqual(t, examplePacket(), actual)
 }

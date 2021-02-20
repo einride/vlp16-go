@@ -16,3 +16,6 @@ linters:
     - unparam # allow constant parameters
     - goerr113 # allow "dynamic" errors
     - nlreturn # don't enforce whitespace before return
+    - wrapcheck # don't enforce error wrapping
+    - exhaustivestruct # don't require exhaustive structs
+    - durationcheck # has false positives
