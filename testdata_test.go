@@ -9,6 +9,7 @@ import (
 )
 
 func newPacketRecordingScanner(t *testing.T, filename string) (*bufio.Scanner, func()) {
+	t.Helper()
 	f, err := os.Open(filename)
 	assert.NilError(t, err)
 	sc := bufio.NewScanner(f)

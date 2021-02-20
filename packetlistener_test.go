@@ -12,6 +12,7 @@ import (
 )
 
 func TestClient_Receive(t *testing.T) {
+	t.Parallel()
 	const testTimeout = time.Second
 	ctx, cancel := context.WithTimeout(context.Background(), testTimeout)
 	defer cancel()
