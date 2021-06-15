@@ -42,3 +42,11 @@ go-generate: \
 %_string.go: %.go $(stringer)
 	$(info generating $@...)
 	@go generate ./$<
+
+.PHONY: run-emulator1
+run-emulator1:
+	@go run examples/vlp16-listen/main.go -s=true -play=testdata/recording.bin -p=2368
+
+.PHONY: run-emulator2
+run-emulator2:
+	@go run examples/vlp16-listen/main.go -s=true -play=testdata/recording.bin -p=2369
