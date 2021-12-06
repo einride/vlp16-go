@@ -19,3 +19,6 @@ linters:
     - wrapcheck # don't enforce error wrapping
     - exhaustivestruct # don't require exhaustive structs
     - durationcheck # has false positives
+    - scopelint # deprecated
+    - golint # deprecated
+    - maligned # deprecated

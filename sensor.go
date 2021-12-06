@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	// CloumnsPerPacket is the number of columns in point cloud matrix.
+	// ColumnsPerPacket is the number of columns in point cloud matrix.
 	ColumnsPerPacket = BlocksPerPacket * 2
 	// RowsPerColumnSingleReturn is the number of rows in point cloud in single return mode.
 	RowsPerColumnSingleReturn = 16
