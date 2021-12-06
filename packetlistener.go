@@ -25,7 +25,10 @@ func ListenUDP(ctx context.Context, addr string, listenOpts ...ListenOption) (_ 
 	if err != nil {
 		return nil, err
 	}
-	udpConn := packetConn.(*net.UDPConn)
+	udpConn, ok := packetConn.(*net.UDPConn)
+	if !ok {
+		return nil, fmt.Errorf("listenudp couldn't convert type to udpconn")
+	}
 	if err := udpConn.SetReadBuffer(opts.bufferSizeBytes); err != nil {
 		return nil, err
 	}
