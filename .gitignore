@@ -1,4 +1,2 @@
 .idea
-test/mocks
-tools/*/*/
-build/
+.mage/tools/
