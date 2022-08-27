@@ -1,13 +1,13 @@
 package vlp16
 
 import (
-	"io/ioutil"
+	"os"
 
 	"gotest.tools/v3/assert"
 )
 
 func exampleRawPacket(t assert.TestingT) *RawPacket {
-	data, err := ioutil.ReadFile("testdata/packet.bin")
+	data, err := os.ReadFile("testdata/packet.bin")
 	assert.NilError(t, err)
 	var rawPacket RawPacket
 	copy(rawPacket[:], data)
