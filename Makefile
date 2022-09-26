@@ -57,7 +57,7 @@ format-markdown: $(sagefile)
 
 .PHONY: format-yaml
 format-yaml: $(sagefile)
-	@$(sagefile) FormatYAML
+	@$(sagefile) FormatYaml
 
 .PHONY: git-verify-no-diff
 git-verify-no-diff: $(sagefile)
