@@ -62,8 +62,9 @@ const (
 	indexOfProductIDInPacket  = indexOfReturnModeInPacket + lengthOfReturnMode
 )
 
-// compile-time assertion on structure of packet.
-//nolint: lll
+// Compile-time assertion on structure of packet.
+
+//nolint:lll
 var _ [SizeOfPacket]struct{} = [lengthOfBlock*BlocksPerPacket + lengthOfTimestamp + lengthOfReturnMode + lengthOfProductID]struct{}{}
 
 // flag is the magic value of the flag field.
