@@ -1,24 +1,25 @@
-VLP-16 Go
-=========
+# VLP-16 Go
 
-[![PkgGoDev](https://pkg.go.dev/badge/go.einride.tech/vlp16)](https://pkg.go.dev/go.einride.tech/vlp16) [![GoReportCard](https://goreportcard.com/badge/go.einride.tech/vlp16)](https://goreportcard.com/report/go.einride.tech/vlp16) [![Codecov](https://codecov.io/gh/einride/vlp16-go/branch/master/graph/badge.svg)](https://codecov.io/gh/einride/vlp16-go)
+[![PkgGoDev](https://pkg.go.dev/badge/go.einride.tech/vlp16)](https://pkg.go.dev/go.einride.tech/vlp16)
+[![GoReportCard](https://goreportcard.com/badge/go.einride.tech/vlp16)](https://goreportcard.com/report/go.einride.tech/vlp16)
+[![Codecov](https://codecov.io/gh/einride/vlp16-go/branch/master/graph/badge.svg)](https://codecov.io/gh/einride/vlp16-go)
 
-Go SDK for reading and parsing data from [Velodyne](https://velodynelidar.com/) [VLP-16 (a.k.a. Puck)](https://velodynelidar.com/products/puck/) sensors.
+Go SDK for reading and parsing data from [Velodyne](https://velodynelidar.com/)
+[VLP-16 (a.k.a. Puck)](https://velodynelidar.com/products/puck/) sensors.
 
-Documentation
--------------
+## Documentation
 
-See the [VLP-16 product page](https://velodynelidar.com/products/puck/) and the [VLP-16 packet structure](https://velodynelidar.com/wp-content/uploads/2019/09/63-9276-Rev-C-VLP-16-Application-Note-Packet-Structure-Timing-Definition.pdf) specification.
+See the [VLP-16 product page](https://velodynelidar.com/products/puck/) and the
+[VLP-16 packet structure](https://velodynelidar.com/wp-content/uploads/2019/09/63-9276-Rev-C-VLP-16-Application-Note-Packet-Structure-Timing-Definition.pdf)
+specification.
 
-Installing
-----------
+## Installing
 
 ```bash
 $ go get -u go.einride.tech/vlp16
 ```
 
-Examples
---------
+## Examples
 
 ### Listen for VLP-16 packets
 
