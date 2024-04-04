@@ -3,7 +3,7 @@ module go.einride.tech/vlp16
 go 1.17
 
 require (
-	golang.org/x/net v0.22.0
+	golang.org/x/net v0.23.0
 	gotest.tools/v3 v3.5.1
 )
 
