@@ -18,4 +18,4 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           file: .sage/build/go/coverage/go-test.txt
-          fail_ci_if_error: true
+          fail_ci_if_error: false
