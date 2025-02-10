@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	golang.org/x/net v0.34.0
-	gotest.tools/v3 v3.5.1
+	gotest.tools/v3 v3.5.2
 )
 
 require (
